@@ -6,6 +6,7 @@ from application import config
 from application.config import LocalDevelopmentConfig
 from application.database import db
 from flask_cors import CORS
+from application.models import *
 # from application.security import *
 
 app = None
@@ -34,8 +35,8 @@ from application.controllers import *
 
 from application.api import *
 api.add_resource(UserResource, "/api/user", "/api/user/<username>")
-api.add_resource(DeckResource, "/api/deck","/api/deck/<deck_name>","/api/deck/<username>","/api/deck/<username>/<deck_name>")
-api.add_resource(CardResource, "/api/card")
+api.add_resource(DeckResource, "/api/deck","/api/deck/<deck_name>")
+api.add_resource(CardResource, "/api/card/<card_id>", "/api/card")
 
 if __name__ == '__main__':   
     app.run(debug = True)

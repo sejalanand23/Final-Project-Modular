@@ -104,8 +104,9 @@ def create_deck(user_name):
     deck_data = Deck(deck_name = deck_name) #Enter deck into deck table
     db.session.add(deck_data)
     db.session.commit()
-    deck = Deck.query.filter_by(deck_name = deck_name).first()
-    did = deck.deck_id
+    did = deck_data.deck_id
+    # deck = Deck.query.filter_by(deck_name = deck_name).all()
+    # did = deck.deck_id
     deck_user_data = UserDeckRelation(userUCR_foreignid = uid, deckUCR_foreignid = did) #enter data into deck-user table
     db.session.add(deck_user_data)
     db.session.commit()

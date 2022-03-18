@@ -13,7 +13,7 @@ class User(db.Model,UserMixin):
   password = db.Column(db.String(15), nullable = False)
   # active = db.Column(db.Boolean())
   # fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
-  deck_user = db.relationship('UserDeckRelation', backref = 'user')
+  deck_user = db.relationship('UserDeckRelation', backref = 'user',cascade="all,delete")
 
 user_fields = {
     'user_id' : fields.Integer,
@@ -30,10 +30,10 @@ class Role(db.Model, RoleMixin):
 class Card(db.Model):
   __tablename__ = 'card'
   card_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-  card_front = db.Column(db.String(100), unique = True, nullable = False)
+  card_front = db.Column(db.String(100), nullable = False)
   card_back = db.Column(db.String(100), nullable = False)
   difficulty = db.Column(db.String(100))
-  deck_card = db.relationship('CardDeckRelation', backref = 'card')
+  deck_card = db.relationship('CardDeckRelation', backref = 'card',cascade="all,delete")
 
 card_fields = {
     'card_id' : fields.Integer,
@@ -45,11 +45,11 @@ card_fields = {
 class Deck(db.Model):
   __tablename__ = 'deck'
   deck_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-  deck_name = db.Column(db.String(100), nullable = False, unique = True)
+  deck_name = db.Column(db.String(100), nullable = False)
   deck_total_score = db.Column(db.Integer)
   deck_average_score = db.Column(db.Float)
-  card_deck = db.relationship('CardDeckRelation', backref = 'deck')
-  user_deck = db.relationship('UserDeckRelation', backref = 'deck')
+  card_deck = db.relationship('CardDeckRelation', backref = 'deck',cascade="all,delete")
+  user_deck = db.relationship('UserDeckRelation', backref = 'deck',cascade="all,delete")
 
 deck_fields = {
     'deck_id' : fields.Integer,
