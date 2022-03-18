@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <style>
+        .form-row{
+          justify-content : center;
+        }
+      </style>
+    <title>Create Deck</title>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <span class="navbar-brand mb-0 h1">Flashcard Application</span>
+      </nav>
+
+      {% block content %}
+      {% for message in get_flashed_messages() %}
+      <div class="alert alert-primary" role="alert">
+          {{ message }}
+      {% endfor %}
+  
+      {% block page_content %}{% endblock %}
+  </div>
+  {% endblock %}
+  <form method = 'POST' action = '{{ url_for("create_deck",user_name = user_name) }}' align = "center">
+    <div class="form-row" align = "center">
+      <div class="form-group">
+        <label for="deck_name">Enter Deck's Name </label>
+        <input type="text" class="form-control" name = "deck_name" id = "deck_name" autocomplete="off">
+      </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Add Cards to Deck</button>
+  </form>
+
+</body>
+</html>
