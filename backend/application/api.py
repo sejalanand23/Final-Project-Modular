@@ -80,6 +80,7 @@ class UserResource(Resource):
 
 class DeckResource(Resource):
     @marshal_with(deck_fields)
+    @auth_required("token")
     def get(self,email,deck_name):
         user = User.query.filter_by(email = email).first()
         if not user:
@@ -99,6 +100,7 @@ class DeckResource(Resource):
                     
 
     @marshal_with(deck_fields)
+    @auth_required("token")
     def post(self):
         deck_data = deck_post_parser.parse_args()
         user = User.query.filter_by(email = deck_data['email']).first()
@@ -127,6 +129,7 @@ class DeckResource(Resource):
         return new_deck_data,200
 
     # @marshal_with(deck_fields)
+    @auth_required("token")
     def put(self, deck_name = None):
         if not deck_name:
             abort(400, "Old Deck name not specified")
@@ -150,7 +153,8 @@ class DeckResource(Resource):
                 
 
     # @marshal_with(deck_fields)
-    def delete(self):
+    @auth_required("token")
+    def delete(self):    
             deck_data = deck_post_parser.parse_args()
             email = deck_data['email']
             user = User.query.filter_by(email = email).first()
@@ -175,6 +179,7 @@ class DeckResource(Resource):
 
 class CardResource(Resource):
     @marshal_with(card_fields)
+    @auth_required("token")
     def get(self,card_id = None):
         card = Card.query.filter_by(card_id = card_id).first()
         if card:
@@ -183,6 +188,7 @@ class CardResource(Resource):
             abort(404,"Card Not Found")
     
     # @marshal_with(card_fields)
+    @auth_required("token")
     def put(self,card_id):
         card = Card.query.filter_by(card_id = card_id).first()
         if not card:
@@ -206,6 +212,7 @@ class CardResource(Resource):
             return "Card updated successfully",200
 
     @marshal_with(card_fields)
+    @auth_required("token")
     def post(self):
         card_args = card_post_parser.parse_args()
 
@@ -232,7 +239,7 @@ class CardResource(Resource):
                         db.session.commit()
                         return "Card added successfully", 200
          
-
+    @auth_required("token")
     def delete(self,card_id):
         card = db.session.query(Card).filter_by(card_id = card_id).first()
         if card:
@@ -244,6 +251,7 @@ class CardResource(Resource):
 
 class QuizResource(Resource):
     @marshal_with(card_fields)
+    @auth_required("token")
     def get(self,email,deck_name):
         user = User.query.filter_by(email = email).first()
         if not user:
