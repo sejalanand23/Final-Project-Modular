@@ -7,7 +7,16 @@ from application.config import LocalDevelopmentConfig
 from application.database import db
 from flask_cors import CORS
 from application.models import *
-# from application.security import *
+from flask_security import Security, SQLAlchemySessionUserDatastore, SQLAlchemyUserDatastore
+from application.models import User, Role
+from flask_login import LoginManager
+# from wtforms import StringField
+from wtforms.validators import DataRequired
+from flask_security.forms import RegisterForm,LoginForm,StringField
+
+class ExtendedRegisterForm(RegisterForm):
+    username = StringField('username', [DataRequired()])
+
 
 app = None
 api = None
@@ -25,8 +34,9 @@ def create_app():
     api = Api(app)
     db.create_all()
     app.app_context().push()
-    # sec.init_app(app, user_datastore)
-    # return app
+    # Setup Flask-Security
+    user_datastore = SQLAlchemySessionUserDatastore(db.session, User, Role)
+    security = Security(app, user_datastore, register_form=ExtendedRegisterForm)
     return app,api
 
 app,api = create_app()

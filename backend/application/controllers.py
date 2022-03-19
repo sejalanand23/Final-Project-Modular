@@ -1,9 +1,7 @@
 from flask import Flask
 from flask import render_template, redirect,request,flash,url_for,session,jsonify
 from flask_restful import Api,Resource,fields,marshal_with,reqparse,abort
-from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
-from application.security import user_datastore, sec
-# from flask_security import hash_password
+from flask_security import login_required,current_user
 from flask import current_app as app
 from application.models import *
 from application.validation import *
@@ -77,13 +75,15 @@ def logout():
     return redirect(url_for('home'))
 
 @app.route('/dashboard/<string:email>',methods = ['GET','POST'])
+@login_required
 def dashboard(email):
-  user = User.query.filter_by(email = email).first()
-  uid = user.id
-  decks = Deck.query.all()
-  score_info = UserDeckRelation.query.all()
-  session['ques_seen'] = 0
-  return render_template('dashboard.html',email = email, decks = decks,score_info = score_info,uid = uid) 
+    email = current_user.email
+    user = User.query.filter_by(email = email).first()
+    uid = user.id
+    decks = Deck.query.all()
+    score_info = UserDeckRelation.query.all()
+    session['ques_seen'] = 0
+    return render_template('dashboard.html',email = email, decks = decks,score_info = score_info,uid = uid) 
 
 @app.route('/dashboard/<string:email>/createdeck',methods = ['GET','POST'])
 def create_deck(email):
@@ -114,6 +114,7 @@ def create_deck(email):
   return render_template('create_deck.html',email = email)
 
 @app.route('/dashboard/<string:email>/<string:deck_name>/editdeck',methods = ['GET','POST'])
+@login_required
 def edit_deck(email, deck_name):
   if request.method == 'POST':
     d_new = request.form['deck_name_new']
@@ -124,6 +125,7 @@ def edit_deck(email, deck_name):
   return render_template('edit_deck.html',email = email, deck_name = deck_name)
 
 @app.route('/dashboard/<string:email>/<string:deck_name>/delete_deck',methods = ['GET','POST'])
+@login_required
 def delete_deck(email, deck_name):
   user = User.query.filter_by(email = email).first()
   uid = user.id
@@ -144,6 +146,7 @@ def delete_deck(email, deck_name):
   
 
 @app.route('/dashboard/<string:email>/<string:deck_name>/addcards',methods = ['GET','POST'])
+@login_required
 def add_cards(email,deck_name):
   if request.method == 'POST':
     front = request.form['card_front']
@@ -164,6 +167,7 @@ def add_cards(email,deck_name):
   return render_template('add_cards.html',email = email, deck_name = deck_name)
 
 @app.route('/dashboard/<string:email>/<string:deck_name>/quiz',methods = ['GET','POST'])
+@login_required
 def quiz(email, deck_name):
   
   deck = Deck.query.filter_by(deck_name=deck_name).first()
@@ -223,6 +227,7 @@ def quiz(email, deck_name):
     cards_difficulty = cards_difficulty, card_front = card_front,card_back = card_back )
 
 @app.route('/dashboard/<string:email>/<string:deck_name>/quiz_ans',methods = ['GET','POST'])
+@login_required
 def quiz_ans(email,deck_name):
   if request.method == 'POST':
     card_front = request.form.get("card_front")
@@ -275,5 +280,5 @@ def result(email,deck_name):
   score = deck_user_data.correct
   out_of = CardDeckRelation.query.filter_by(deckCDR_foreignid = did).count()
   
-  return jsonify({"Score":score, "Out_of":out_of})
-  # return render_template('result.html',email = email, deck_name = deck_name, score = score, out_of = out_of)
+  # return jsonify({"Score":score, "Out_of":out_of})
+  return render_template('result.html',email = email, deck_name = deck_name, score = score, out_of = out_of)
