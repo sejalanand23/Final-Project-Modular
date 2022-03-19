@@ -26,7 +26,7 @@
       {% block page_content %}{% endblock %}
   </div>
   {% endblock %}
-  <form method = 'POST' action = '{{ url_for("create_deck",user_name = user_name) }}' align = "center">
+  <form method = 'POST' action = '{{ url_for("create_deck",email = email) }}' align = "center">
     <div class="form-row" align = "center">
       <div class="form-group">
         <label for="deck_name">Enter Deck's Name </label>

@@ -15,7 +15,7 @@
 <body>
     <nav class="navbar navbar-light bg-light">
         <span class="navbar-brand mb-0 h1">Flashcard Application</span>
-        <form action='{{ url_for("dashboard",user_name = user_name,deck_name = deck_name) }}' align = 'center'>
+        <form action='{{ url_for("dashboard",email = email,deck_name = deck_name) }}' align = 'center'>
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Dashboard</button>
         </form>
       </nav>
@@ -31,7 +31,7 @@
 
   
 
-  <form method = 'POST' action = '{{ url_for("add_cards",user_name = user_name,deck_name = deck_name) }}' align = "center">
+  <form method = 'POST' action = '{{ url_for("add_cards",email = email,deck_name = deck_name) }}' align = "center">
     <div class="form-row" align = "center">
       <div class="form-group">
         <label for="card_front">Enter Card's Front</label>

@@ -10,7 +10,7 @@
   <nav class="navbar navbar-light bg-light">
     <span class="navbar-brand mb-0 h1">Flashcard Application</span>
     <span class="navbar-text">
-      User logged in: {{user_name}} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
+      User logged in: {{email}} &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp &nbsp 
     </span>
     <form action='/logout' align = 'center'>
       <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
@@ -39,17 +39,17 @@
               <td>{{score['correct']}}</td>
               <td>{{ deck['deck_average_score'] }}</td>
               <td>
-                <form action='{{ url_for("edit_deck",user_name = user_name,deck_name = deck["deck_name"]) }}' align = 'center'>
+                <form action='{{ url_for("edit_deck",email = email,deck_name = deck["deck_name"]) }}' align = 'center'>
                   <button class="btn btn-outline-secondary" type="submit">Edit Deck</button>
                 </form>
               </td>
               <td>
-                <form action='/dashboard/{{user_name}}/{{deck["deck_name"]}}/delete_deck' align = 'center'>
+                <form action='/dashboard/{{email}}/{{deck["deck_name"]}}/delete_deck' align = 'center'>
                   <button class="btn btn-outline-secondary" type="submit">Delete Deck</button>
                 </form>
               </td>
               <td>
-                <form action='/dashboard/{{user_name}}/{{deck["deck_name"]}}/quiz' align = 'center'>
+                <form action='/dashboard/{{email}}/{{deck["deck_name"]}}/quiz' align = 'center'>
                   <button class="btn btn-outline-secondary" type="submit">Take Quiz</button>
                 </form>
               </td>
@@ -59,7 +59,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <form action='{{ url_for("create_deck",user_name = user_name) }}' align = 'center'>
+  <form action='{{ url_for("create_deck",email = email) }}' align = 'center'>
     <button class="btn btn-outline-secondary" type="submit">Create New Deck</button>
 </form>
 </body>
