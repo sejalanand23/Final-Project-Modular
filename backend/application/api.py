@@ -13,12 +13,12 @@ import werkzeug
 from flask import abort
 
 user_parser = reqparse.RequestParser()
-# user_parser.add_argument('user_id',type=int)
-user_parser.add_argument('username',type = str,required = True)
+# user_parser.add_argument('id',type=int)
+user_parser.add_argument('email',type = str,required = True)
 user_parser.add_argument('password',type = str)
 
 deck_post_parser = reqparse.RequestParser()
-deck_post_parser.add_argument('username',type = str,required = True)
+deck_post_parser.add_argument('email',type = str,required = True)
 deck_post_parser.add_argument('deck_name',type = str, required = True)
 
 card_parser = reqparse.RequestParser()
@@ -28,7 +28,7 @@ card_parser.add_argument('card_back',type = str)
 card_parser.add_argument('difficulty',type = str)
 
 card_post_parser = reqparse.RequestParser()
-card_post_parser.add_argument('username',type = str,required = True, help = "User is Required")
+card_post_parser.add_argument('email',type = str,required = True, help = "User is Required")
 card_post_parser.add_argument('card_front',type = str,required = True, help = "Card Front is Required")
 card_post_parser.add_argument('card_back',type = str,required = True, help = "Card Back is Required")
 card_post_parser.add_argument('deck_id',type = int, required = True, help = "Deck Info is Required")
@@ -54,9 +54,9 @@ card_deck_parser.add_argument('deckCDR_foreignid',type = int)
 
 class UserResource(Resource):
     @marshal_with(user_fields)
-    def get(self,username=None):
-        if username:
-            user = User.query.filter_by(username = username).first()
+    def get(self,email=None):
+        if email:
+            user = User.query.filter_by(email = email).first()
             if user is None:
                 abort(404, "User does not exist")
             else:
@@ -68,11 +68,11 @@ class UserResource(Resource):
     @marshal_with(user_fields)
     def post(self):
         user_args = user_parser.parse_args()
-        user = User.query.filter_by(username = user_args['username']).first()
+        user = User.query.filter_by(email = user_args['email']).first()
         if user:
             abort(409,"User already exists")
         else:
-            u = User(username = user_args['username'],password = user_args['password'])
+            u = User(email = user_args['email'],password = user_args['password'])
             db.session.add(u)
             db.session.commit()
             return u, 201
@@ -80,30 +80,35 @@ class UserResource(Resource):
 
 class DeckResource(Resource):
     @marshal_with(deck_fields)
-    def get(self,deck_name = None):
-        if deck_name:
-            deck = Deck.query.filter_by(deck_name=deck_name).first()
-            if deck:
-                return deck, 201
-            else:
-                abort(404,"Deck does not exist")
+    def get(self,email,deck_name):
+        user = User.query.filter_by(email = email).first()
+        if not user:
+            abort(404, "User does not exist")
         else:
-            deck = Deck.query.all()
-            return deck,200
+            uid = user.id     
+            #get decks by current user
+            decks = Deck.query.filter_by(deck_name = deck_name, ).all()   #get all decks with this name
+            deck_foreign = UserDeckRelation.query.filter_by(userUCR_foreignid = uid).all()
+            if deck_foreign: # if current user has created any decks
+                if decks: # if there are any decks with this deck name 
+                    for deck in decks:
+                        for deck_ in deck_foreign:
+                            if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered 
+                                return deck,200
+            abort(404,"Deck Not Found")
+                    
 
     @marshal_with(deck_fields)
     def post(self):
         deck_data = deck_post_parser.parse_args()
-        user = User.query.filter_by(username = deck_data['username']).first()
+        user = User.query.filter_by(email = deck_data['email']).first()
         if not user:
             abort(404, "User does not exist")
         else:
-            uid = user.user_id      
+            uid = user.id      
         #get decks by current user
         decks = Deck.query.filter_by(deck_name = deck_data['deck_name'], ).all()   #get all decks with this name
         deck_foreign = UserDeckRelation.query.filter_by(userUCR_foreignid = uid).all()
-        # if deck_foreign:
-        #     for deck in decks:
         if deck_foreign: # if current user has created any decks
             if decks: # if there are any decks with this deck name 
                 for deck in decks:
@@ -127,9 +132,9 @@ class DeckResource(Resource):
             abort(400, "Old Deck name not specified")
         else:
             deck_data = deck_post_parser.parse_args()
-            username = deck_data['username']
-            user = User.query.filter_by(username = username).first()
-            uid = user.user_id
+            email = deck_data['email']
+            user = User.query.filter_by(email = email).first()
+            uid = user.id
             decks = Deck.query.filter_by(deck_name = deck_name).all()
             for deck in decks:
                 did = deck.deck_id
@@ -147,9 +152,9 @@ class DeckResource(Resource):
     # @marshal_with(deck_fields)
     def delete(self):
             deck_data = deck_post_parser.parse_args()
-            username = deck_data['username']
-            user = User.query.filter_by(username = username).first()
-            uid = user.user_id
+            email = deck_data['email']
+            user = User.query.filter_by(email = email).first()
+            uid = user.id
             deck_name = deck_data['deck_name']
             decks = Deck.query.filter_by(deck_name = deck_name).all()
             for deck in decks:
@@ -204,11 +209,11 @@ class CardResource(Resource):
     def post(self):
         card_args = card_post_parser.parse_args()
 
-        user = User.query.filter_by(username = card_args['username']).first()
+        user = User.query.filter_by(email = card_args['email']).first()
         if not user:
             abort(404, "User does not exist")
         else:     
-            deck_info = UserDeckRelation.query.filter_by(userUCR_foreignid = user.user_id, deckUCR_foreignid = card_args['deck_id']).first()
+            deck_info = UserDeckRelation.query.filter_by(userUCR_foreignid = user.id, deckUCR_foreignid = card_args['deck_id']).first()
             if not deck_info:
                 abort(404, "User has no such deck")
             else:
@@ -236,3 +241,26 @@ class CardResource(Resource):
             return "Card Deleted Succesfully",200
         else:
             abort(404,"Card Not Found")
+
+class QuizResource(Resource):
+    @marshal_with(card_fields)
+    def get(self,email,deck_name):
+        user = User.query.filter_by(email = email).first()
+        if not user:
+            abort(404, "User does not exist")
+        else:
+            uid = user.id     
+            #get decks by current user
+            decks = Deck.query.filter_by(deck_name = deck_name, ).all()   #get all decks with this name
+            deck_foreign = UserDeckRelation.query.filter_by(userUCR_foreignid = uid).all()
+            if deck_foreign: # if current user has created any decks
+                if decks: # if there are any decks with this deck name 
+                    for deck in decks:
+                        for deck_ in deck_foreign:
+                            if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered 
+                                all_card_ids = db.session.query(CardDeckRelation).with_entities(CardDeckRelation.cardCDR_foreignid).filter(CardDeckRelation.deckCDR_foreignid == deck.deck_id).all()
+                                ids = [id for (id,) in all_card_ids]
+                                cards = db.session.query(Card).filter(Card.card_id.in_(ids)).all()
+                                return cards,200
+
+            abort(404,"Deck Not Found")
