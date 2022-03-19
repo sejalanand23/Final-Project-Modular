@@ -56,9 +56,9 @@ def login():
 
     else:
       p = user.password
-      user_name = user.email
+      email = user.email
       if session['pswd'] == p:
-        url = '/dashboard/'+str(user_name)
+        url = '/dashboard/'+str(email)
         return redirect(url)
         # response = jsonify({'message' : 'You are logged in successfully'})
         # response.status_code = 200
@@ -76,18 +76,18 @@ def logout():
     session['user'] = None
     return redirect(url_for('home'))
 
-@app.route('/dashboard/<string:user_name>',methods = ['GET','POST'])
-def dashboard(user_name):
-  user = User.query.filter_by(email = user_name).first()
+@app.route('/dashboard/<string:email>',methods = ['GET','POST'])
+def dashboard(email):
+  user = User.query.filter_by(email = email).first()
   uid = user.id
   decks = Deck.query.all()
   score_info = UserDeckRelation.query.all()
   session['ques_seen'] = 0
-  return render_template('dashboard.html',user_name = user_name, decks = decks,score_info = score_info,uid = uid) 
+  return render_template('dashboard.html',email = email, decks = decks,score_info = score_info,uid = uid) 
 
-@app.route('/dashboard/<string:user_name>/createdeck',methods = ['GET','POST'])
-def create_deck(user_name):
-  user = User.query.filter_by(email = user_name).first()
+@app.route('/dashboard/<string:email>/createdeck',methods = ['GET','POST'])
+def create_deck(email):
+  user = User.query.filter_by(email = email).first()
   uid = user.id
   if request.method == 'POST':
     deck_name = request.form['deck_name']
@@ -99,35 +99,33 @@ def create_deck(user_name):
           for deck_ in deck_foreign:
             if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered
               flash('You have already create a deck with this name!')
-              url = '/dashboard/'+str(user_name)+'/'+'createdeck'
+              url = '/dashboard/'+str(email)+'/'+'createdeck'
               return redirect(url)
     deck_data = Deck(deck_name = deck_name) #Enter deck into deck table
     db.session.add(deck_data)
     db.session.commit()
     did = deck_data.deck_id
-    # deck = Deck.query.filter_by(deck_name = deck_name).all()
-    # did = deck.deck_id
     deck_user_data = UserDeckRelation(userUCR_foreignid = uid, deckUCR_foreignid = did) #enter data into deck-user table
     db.session.add(deck_user_data)
     db.session.commit()
     flash('Deck Created Successfully!')
-    url = '/dashboard/'+str(user_name)+'/'+str(deck_name)+'/addcards'
+    url = '/dashboard/'+str(email)+'/'+str(deck_name)+'/addcards'
     return redirect(url)
-  return render_template('create_deck.html',user_name = user_name)
+  return render_template('create_deck.html',email = email)
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/editdeck',methods = ['GET','POST'])
-def edit_deck(user_name, deck_name):
+@app.route('/dashboard/<string:email>/<string:deck_name>/editdeck',methods = ['GET','POST'])
+def edit_deck(email, deck_name):
   if request.method == 'POST':
     d_new = request.form['deck_name_new']
     Deck.query.filter_by(deck_name = deck_name).update(dict(deck_name = d_new))
     db.session.commit()
-    url = '/dashboard/'+str(user_name)
+    url = '/dashboard/'+str(email)
     return redirect(url)
-  return render_template('edit_deck.html',user_name = user_name, deck_name = deck_name)
+  return render_template('edit_deck.html',email = email, deck_name = deck_name)
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/delete_deck',methods = ['GET','POST'])
-def delete_deck(user_name, deck_name):
-  user = User.query.filter_by(email = user_name).first()
+@app.route('/dashboard/<string:email>/<string:deck_name>/delete_deck',methods = ['GET','POST'])
+def delete_deck(email, deck_name):
+  user = User.query.filter_by(email = email).first()
   uid = user.id
   deck = Deck.query.filter_by(deck_name = deck_name).first()
   did = deck.deck_id
@@ -141,12 +139,12 @@ def delete_deck(user_name, deck_name):
     db.session.commit()
   cards = CardDeckRelation.query.filter_by(deckCDR_foreignid = did).delete()
   db.session.commit()
-  url = '/dashboard/'+str(user_name)
+  url = '/dashboard/'+str(email)
   return redirect(url)
   
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/addcards',methods = ['GET','POST'])
-def add_cards(user_name,deck_name):
+@app.route('/dashboard/<string:email>/<string:deck_name>/addcards',methods = ['GET','POST'])
+def add_cards(email,deck_name):
   if request.method == 'POST':
     front = request.form['card_front']
     back = request.form['card_back']
@@ -161,12 +159,12 @@ def add_cards(user_name,deck_name):
     db.session.add(card_deck_data)
     db.session.commit()
     flash('Card Added Successfully! Add Another.')
-    url = '/dashboard/'+str(user_name)+'/'+str(deck_name)+'/addcards'
+    url = '/dashboard/'+str(email)+'/'+str(deck_name)+'/addcards'
     return redirect(url)
-  return render_template('add_cards.html',user_name = user_name, deck_name = deck_name)
+  return render_template('add_cards.html',email = email, deck_name = deck_name)
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/quiz',methods = ['GET','POST'])
-def quiz(user_name, deck_name):
+@app.route('/dashboard/<string:email>/<string:deck_name>/quiz',methods = ['GET','POST'])
+def quiz(email, deck_name):
   
   deck = Deck.query.filter_by(deck_name=deck_name).first()
   did = deck.deck_id
@@ -212,7 +210,7 @@ def quiz(user_name, deck_name):
     deck_user_data.time = review_time
     db.session.commit()
 
-    url = '/dashboard/'+str(user_name)+'/'+str(deck_name)+'/result'
+    url = '/dashboard/'+str(email)+'/'+str(deck_name)+'/result'
     return redirect(url)
 
   keys = list(cards_frontback.keys())
@@ -221,11 +219,11 @@ def quiz(user_name, deck_name):
   session['ques_seen'] += 1
   
 
-  return render_template('quiz.html',user_name = user_name, deck_name = deck_name, cards_frontback = cards_frontback, \
+  return render_template('quiz.html',email = email, deck_name = deck_name, cards_frontback = cards_frontback, \
     cards_difficulty = cards_difficulty, card_front = card_front,card_back = card_back )
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/quiz_ans',methods = ['GET','POST'])
-def quiz_ans(user_name,deck_name):
+@app.route('/dashboard/<string:email>/<string:deck_name>/quiz_ans',methods = ['GET','POST'])
+def quiz_ans(email,deck_name):
   if request.method == 'POST':
     card_front = request.form.get("card_front")
     card_back = request.form.get("card_back")
@@ -266,11 +264,11 @@ def quiz_ans(user_name,deck_name):
   # n = len(cards_frontback)
   # card_front = next(iter(cards_frontback))
   # card_back = cards_frontback[card_front]
-  return render_template('quiz_ans.html',user_name = user_name, deck_name = deck_name,cards_frontback = cards_frontback, \
+  return render_template('quiz_ans.html',email = email, deck_name = deck_name,cards_frontback = cards_frontback, \
     card_front = card_front, card_back = card_back )
 
-@app.route('/dashboard/<string:user_name>/<string:deck_name>/result',methods = ['GET','POST'])
-def result(user_name,deck_name):
+@app.route('/dashboard/<string:email>/<string:deck_name>/result',methods = ['GET','POST'])
+def result(email,deck_name):
   deck = Deck.query.filter_by(deck_name=deck_name).first() #get deck id
   did = deck.deck_id
   deck_user_data = UserDeckRelation.query.filter_by(deckUCR_foreignid = did).first()
@@ -278,4 +276,4 @@ def result(user_name,deck_name):
   out_of = CardDeckRelation.query.filter_by(deckCDR_foreignid = did).count()
   
   return jsonify({"Score":score, "Out_of":out_of})
-  # return render_template('result.html',user_name = user_name, deck_name = deck_name, score = score, out_of = out_of)
+  # return render_template('result.html',email = email, deck_name = deck_name, score = score, out_of = out_of)
