@@ -15,22 +15,22 @@ def home():
   return render_template('home.html')
   # return "API call successful"
 
-@app.route('/signup',methods = ['GET','POST'])
-def signup():
+@app.route('/register',methods = ['GET','POST'])
+def register():
   if request.method == 'POST':
-    uname = request.form['username']
+    uname = request.form['email']
     pswd = request.form['password'] 
 
-    user = User.query.filter_by(username = uname).first()
+    user = User.query.filter_by(email = uname).first()
 
     if user:
-      flash('Username already exists. Try with a different username')
-      return redirect((url_for('signup')))
-      # response = jsonify({'message' : 'Username already exists'})
+      flash('email already exists. Try with a different email')
+      return redirect((url_for('register')))
+      # response = jsonify({'message' : 'email already exists'})
       # response.status_code = 409
       # return response
     else:
-      u = User(username = uname,password = pswd)
+      u = User(email = uname,password = pswd)
       db.session.add(u)
       db.session.commit()
       flash('Account Created Successfully. Login to continue.')
@@ -38,15 +38,15 @@ def signup():
       # response = jsonify({'message' : 'Account Created Successfully!'})
       # response.status_code = 200
       # return response
-  return render_template('signup.html')
+  return render_template('register.html')
 
 @app.route('/login',methods = ['GET','POST'])
 def login():
   if request.method == "POST":
-    session['uname'] = request.form['username']
+    session['uname'] = request.form['email']
     session['pswd'] = request.form['password'] 
 
-    user = User.query.filter_by(username = session['uname']).first()
+    user = User.query.filter_by(email = session['uname']).first()
     if not user:
       flash('User does not exist.')
       return redirect((url_for('login')))
@@ -56,7 +56,7 @@ def login():
 
     else:
       p = user.password
-      user_name = user.username
+      user_name = user.email
       if session['pswd'] == p:
         url = '/dashboard/'+str(user_name)
         return redirect(url)
@@ -78,8 +78,8 @@ def logout():
 
 @app.route('/dashboard/<string:user_name>',methods = ['GET','POST'])
 def dashboard(user_name):
-  user = User.query.filter_by(username = user_name).first()
-  uid = user.user_id
+  user = User.query.filter_by(email = user_name).first()
+  uid = user.id
   decks = Deck.query.all()
   score_info = UserDeckRelation.query.all()
   session['ques_seen'] = 0
@@ -87,8 +87,8 @@ def dashboard(user_name):
 
 @app.route('/dashboard/<string:user_name>/createdeck',methods = ['GET','POST'])
 def create_deck(user_name):
-  user = User.query.filter_by(username = user_name).first()
-  uid = user.user_id
+  user = User.query.filter_by(email = user_name).first()
+  uid = user.id
   if request.method == 'POST':
     deck_name = request.form['deck_name']
     decks = Deck.query.filter_by(deck_name = deck_name).all()   #get all decks with this name
@@ -127,8 +127,8 @@ def edit_deck(user_name, deck_name):
 
 @app.route('/dashboard/<string:user_name>/<string:deck_name>/delete_deck',methods = ['GET','POST'])
 def delete_deck(user_name, deck_name):
-  user = User.query.filter_by(username = user_name).first()
-  uid = user.user_id
+  user = User.query.filter_by(email = user_name).first()
+  uid = user.id
   deck = Deck.query.filter_by(deck_name = deck_name).first()
   did = deck.deck_id
   deck = Deck.query.filter_by(deck_name = deck_name).delete()
