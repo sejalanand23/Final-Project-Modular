@@ -6,18 +6,24 @@ from flask_security import UserMixin, RoleMixin
 
 db = SQLAlchemy()
 
+roles_users = db.Table('roles_users',
+        db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+        db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
+
 class User(db.Model,UserMixin):
   __tablename__ = 'user'
-  user_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-  username = db.Column(db.String(15), unique = True, nullable = False) 
-  password = db.Column(db.String(15), nullable = False)
-  # active = db.Column(db.Boolean())
-  # fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False)
+  id = db.Column(db.Integer, primary_key = True)
+  username = db.Column(db.String(15)) 
+  email = db.Column(db.String(255), unique=True)
+  password = db.Column(db.String(255))
+  active = db.Column(db.Boolean())
+  # confirmed_at = db.Column(db.DateTime())
+  roles = db.relationship('Role', secondary=roles_users,backref=db.backref('users', lazy='dynamic'))
   deck_user = db.relationship('UserDeckRelation', backref = 'user',cascade="all,delete")
 
 user_fields = {
-    'user_id' : fields.Integer,
-    'username' : fields.String,
+    'id' : fields.Integer,
+    'email' : fields.String,
     'password' : fields.String
 }
 
@@ -64,7 +70,7 @@ class UserDeckRelation(db.Model):
   time = db.Column(db.String(100))
   quiz_count = db.Column(db.Integer)
   user_deck_relation_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-  userUCR_foreignid = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable = False)
+  userUCR_foreignid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
   deckUCR_foreignid = db.Column(db.Integer, db.ForeignKey('deck.deck_id'), nullable = False)
 
 user_deck_fields = {
