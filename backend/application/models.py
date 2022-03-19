@@ -6,7 +6,7 @@ from flask_security import UserMixin, RoleMixin
 
 db = SQLAlchemy()
 
-roles_users = db.Table('roles_users',
+role_users = db.Table('role_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
@@ -17,8 +17,8 @@ class User(db.Model,UserMixin):
   email = db.Column(db.String(255), unique=True)
   password = db.Column(db.String(255))
   active = db.Column(db.Boolean())
-  # confirmed_at = db.Column(db.DateTime())
-  roles = db.relationship('Role', secondary=roles_users,backref=db.backref('users', lazy='dynamic'))
+  fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False) 
+  roles = db.relationship('Role', secondary=role_users,backref=db.backref('users', lazy='dynamic'))
   deck_user = db.relationship('UserDeckRelation', backref = 'user',cascade="all,delete")
 
 user_fields = {
