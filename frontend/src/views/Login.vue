@@ -18,6 +18,7 @@
                   autocomplete="off">
                 </div>
               </div>
+              <p v-if="error_email">{{error_email}}</p>
               <br>
               <div class="form-row">
                 <div class="form-group">
@@ -31,6 +32,7 @@
                   autocomplete="off">
                 </div>
               </div>
+              <p v-if="error_password">{{error_password}}</p>
               <br>
               <button @click="login" class="btn btn-primary">Sign in</button>
             </div>
@@ -46,30 +48,11 @@ export default {
     data() {
       return {
         email : "",
-        password : ""
+        password : "",
+        error_email : "",
+        error_password : "",
       }
   },
-  // mounted: function(){
-  //   if 
-  // },
-    // methods: {
-    //     async login(){
-    //       try {
-    //         const login_data = fetch("http://127.0.0.1:5000/login?include_auth_token", {
-    //           method: "POST",
-    //           headers: {
-    //                  'Content-Type':'application/json;charset=utf-8'
-    //            },
-    //            body: JSON.stringify({email:this.email,password:this.password})
-    //         });
-    //         console.log(login_data)
-    //       }
-          
-    //         catch(error){
-    //         console.log("Can't login in: " + error.message)
-    //       }
-    //     }
-    // }
     methods: {
         async login(){
           try {
@@ -79,20 +62,43 @@ export default {
                      'Content-Type':'application/json;charset=utf-8'
                },
                body: JSON.stringify({email:this.email,password:this.password})
-            }).then(response =>{ 
-            if (!response.ok) {
-              console.log(response)
-              throw new Error("Can't login")
-            }
-            return response.json()
+            }).then(resp =>{ 
+              console.log("in 83")
+            return resp.json()
             })
-            .then(login_data => console.log(login_data))
+            .then(async (login_data) => {
+              const {response} = login_data 
+              if (response.errors){
+                const {email,password} = response.errors;
+                console.log({email,password});
+                this.error_email = email ? email[0]:""
+                this.error_password = password ? password[0]:""
+                console.log(this.error_email,this.error_password)
+              }
+              else{
+                // document.cookie = `auth_token=${response.user.authentication_token}`;
+                this.$router.push('dashboard')
+                sessionStorage.setItem('auth-token',response.user.authentication_token)
+                sessionStorage.setItem('email',this.email)
+            //     fetch("http://127.0.0.1:5000/api/user", {
+            //   method: "GET",
+            //   headers: {
+            //          'Content-Type':'application/json;charset=utf-8',
+            //          'Authentication-Token':response.user.authentication_token
+            //    }
+            // })
+            //     .then(r => console.log(r.json()))
+                
+                
+              }
+            }
+            )
             .catch(error => {
               console.log(error);
             });
           }         
             catch(error){
-            console.log(error)
+            console.log("Can't login in: " , error)
           }
         }
     }
