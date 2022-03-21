@@ -52,19 +52,17 @@ export default {
     methods: {
         async login(){
           try {
-            let user_credentials = {
-              email : this.email,
-              password : this.password
-            };
-            await fetch("http://127.0.0.1:5000/login?include_auth_token", {
-               method: "POST",
-               headers: {
-                     'Content-Type':'application/json'
+            const login_data = await fetch("http://127.0.0.1:5000/login?include_auth_token", {
+              method: "POST",
+              headers: {
+                     'Content-Type':'application/json;charset=utf-8'
                },
-               body: JSON.stringify(user_credentials)
-     }).then(data=>data.json()).then(r=>console.log(r));
+               body: JSON.stringify({email:email._value,password:password._value})
+            });
+            console.log(login_data)
           }
-          catch(error){
+          
+            catch(error){
             console.log(error)
           }
         }

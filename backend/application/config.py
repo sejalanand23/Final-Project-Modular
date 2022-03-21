@@ -30,4 +30,4 @@ class LocalDevelopmentConfig(Config):
     # SECURITY_REDIRECT_BEHAVIOR = "spa"
     # SECURITY_CSRF_PROTECT_MECHANISMS = ["session", "basic"]
     # SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True
-    # SECURITY_REDIRECT_HOST = 'localhost:8080'
+    SECURITY_REDIRECT_HOST = 'localhost:8080'
