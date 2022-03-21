@@ -49,19 +49,48 @@ export default {
         password : ""
       }
   },
+  // mounted: function(){
+  //   if 
+  // },
+    // methods: {
+    //     async login(){
+    //       try {
+    //         const login_data = fetch("http://127.0.0.1:5000/login?include_auth_token", {
+    //           method: "POST",
+    //           headers: {
+    //                  'Content-Type':'application/json;charset=utf-8'
+    //            },
+    //            body: JSON.stringify({email:this.email,password:this.password})
+    //         });
+    //         console.log(login_data)
+    //       }
+          
+    //         catch(error){
+    //         console.log("Can't login in: " + error.message)
+    //       }
+    //     }
+    // }
     methods: {
         async login(){
           try {
-            const login_data = await fetch("http://127.0.0.1:5000/login?include_auth_token", {
+            const login_data = fetch("http://127.0.0.1:5000/login?include_auth_token", {
               method: "POST",
               headers: {
                      'Content-Type':'application/json;charset=utf-8'
                },
-               body: JSON.stringify({email:email._value,password:password._value})
+               body: JSON.stringify({email:this.email,password:this.password})
+            }).then(response =>{ 
+            if (!response.ok) {
+              console.log(response)
+              throw new Error("Can't login")
+            }
+            return response.json()
+            })
+            .then(login_data => console.log(login_data))
+            .catch(error => {
+              console.log(error);
             });
-            console.log(login_data)
-          }
-          
+          }         
             catch(error){
             console.log(error)
           }
