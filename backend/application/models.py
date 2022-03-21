@@ -2,6 +2,7 @@ from enum import unique
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import fields
 from sqlalchemy.orm import backref
+# from flask_security import fsqla_v2 as fsqla
 from flask_security import UserMixin, RoleMixin
 
 db = SQLAlchemy()
@@ -10,6 +11,7 @@ role_users = db.Table('role_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
+# class User(db.Model,fsqla.FsUserMixi):
 class User(db.Model,UserMixin):
   __tablename__ = 'user'
   id = db.Column(db.Integer, primary_key = True)
@@ -27,7 +29,8 @@ user_fields = {
     'password' : fields.String
 }
 
-class Role(db.Model, RoleMixin):
+# class Role(db.Model, fsqla.FsRoleMixin):
+class Role(db.Model,RoleMixin):
     __tablename__ = 'role'
     id = db.Column(db.Integer(), primary_key=True)
     name = db.Column(db.String(80), unique=True)

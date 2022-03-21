@@ -36,7 +36,7 @@ def register():
       # response = jsonify({'message' : 'Account Created Successfully!'})
       # response.status_code = 200
       # return response
-  return render_template('register.html')
+  return render_template('/register.html')
 
 @app.route('/login',methods = ['GET','POST'])
 def login():

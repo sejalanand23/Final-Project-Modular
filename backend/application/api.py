@@ -52,6 +52,8 @@ card_deck_parser.add_argument('card_deck_relation_id',type = int)
 card_deck_parser.add_argument('cardCDR_foreignid',type = int)
 card_deck_parser.add_argument('deckCDR_foreignid',type = int)
 
+
+
 class UserResource(Resource):
     @marshal_with(user_fields)
     def get(self,email=None):

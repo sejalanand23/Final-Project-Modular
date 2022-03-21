@@ -22,3 +22,12 @@ class LocalDevelopmentConfig(Config):
     SECURITY_UNAUTHORIZED_VIEW = None
     SECURITY_POST_LOGIN_VIEW = '/dashboard/email'
     WTF_CSRF_ENABLED = False
+    # SECURITY_URL_PREFIX = '/api/accounts'
+    # # SECURITY_POST_CONFIRM_VIEW = "/confirmed"
+    # # SECURITY_CONFIRM_ERROR_VIEW = "/confirm-error"
+    # # SECURITY_RESET_VIEW = "/reset-password"
+    # # SECURITY_RESET_ERROR_VIEW = "/reset-password"
+    # # SECURITY_REDIRECT_BEHAVIOR = "spa"
+    # SECURITY_CSRF_PROTECT_MECHANISMS = ["session", "basic"]
+    # SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True
+    # SECURITY_REDIRECT_HOST = 'localhost:8080'
