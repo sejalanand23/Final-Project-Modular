@@ -55,6 +55,7 @@ card_deck_parser.add_argument('deckCDR_foreignid',type = int)
 
 
 class UserResource(Resource):
+    @auth_required("token")
     @marshal_with(user_fields)
     def get(self,email=None):
         if email:
@@ -68,6 +69,7 @@ class UserResource(Resource):
             return user, 201
     
     @marshal_with(user_fields)
+    @auth_required("token")
     def post(self):
         user_args = user_parser.parse_args()
         user = User.query.filter_by(email = user_args['email']).first()

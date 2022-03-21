@@ -2,8 +2,12 @@ from enum import unique
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import fields
 from sqlalchemy.orm import backref
-# from flask_security import fsqla_v2 as fsqla
+from sympy import sec
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_security.models import fsqla_v2 as fsqla
 from flask_security import UserMixin, RoleMixin
+import jwt
+import datetime
 
 db = SQLAlchemy()
 
@@ -11,7 +15,7 @@ role_users = db.Table('role_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
         db.Column('role_id', db.Integer(), db.ForeignKey('role.id')))
 
-# class User(db.Model,fsqla.FsUserMixi):
+# class User(db.Model,fsqla.FsUserMixin):
 class User(db.Model,UserMixin):
   __tablename__ = 'user'
   id = db.Column(db.Integer, primary_key = True)
@@ -22,6 +26,40 @@ class User(db.Model,UserMixin):
   fs_uniquifier = db.Column(db.String(255), unique=True, nullable=False) 
   roles = db.relationship('Role', secondary=role_users,backref=db.backref('users', lazy='dynamic'))
   deck_user = db.relationship('UserDeckRelation', backref = 'user',cascade="all,delete")
+
+  def encode_auth_token(self, user_id):
+    """
+    Generates the Auth Token
+    :return: string
+    """
+    try:
+        payload = {
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=0, seconds=5),
+            'iat': datetime.datetime.utcnow(),
+            'sub': user_id
+        }
+        return jwt.encode(
+            payload,
+            'some-secret-key',
+            algorithm='HS256'
+        )
+    except Exception as e:
+        return e
+
+  @staticmethod
+  def decode_auth_token(auth_token):
+      """
+      Decodes the auth token
+      :param auth_token:
+      :return: integer|string
+      """
+      try:
+          payload = jwt.decode(auth_token,'some-secret-key' )
+          return payload['sub']
+      except jwt.ExpiredSignatureError:
+          return 'Signature expired. Please log in again.'
+      except jwt.InvalidTokenError:
+          return 'Invalid token. Please log in again.'
 
 user_fields = {
     'id' : fields.Integer,
