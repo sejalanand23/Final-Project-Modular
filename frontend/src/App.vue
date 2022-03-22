@@ -46,22 +46,19 @@ export default {
         return {
             auth_token : "",
             isLogged: this.checkIfIsLogged(),
-            email : this.email_id
+            email : this.email_id,
         }
     },
     beforeMount() {
-      let email = sessionStorage.getItem('email')
-      if (email){
+      let email_storage = sessionStorage.getItem('email')
+      if (email_storage){
         this.email = email
-        this.isLogged = this.checkIfIsLogged();
       }
     },
   methods : {
     logout(){
       try{
         sessionStorage.clear();
-        this.isLogged = this.checkIfIsLogged();
-        console.log(this.isLogged)
         this.$router.push('/');
           }
           catch(error){

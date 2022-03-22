@@ -81,10 +81,10 @@ export default {
                 console.log(this.error_email,this.error_password)
               }
               else{     
-                console.log('login');
                 this.auth = response.user.authentication_token;
                 sessionStorage.setItem('auth-token',response.user.authentication_token);
                 sessionStorage.setItem('email',this.email);
+                // this.$bus.$emit('logged_in','User logged in')
                 this.$router.push('dashboard')
             //     fetch("http://127.0.0.1:5000/api/user", {
             //   method: "GET",
