@@ -45,10 +45,8 @@
 </template>
 
 <script>
-import { computed } from '@vue/runtime-core';
 export default {
     name: 'login',
-    // props: { authenticated: Boolean },
     data() {
       return {
         email : "",
@@ -84,18 +82,7 @@ export default {
                 this.auth = response.user.authentication_token;
                 sessionStorage.setItem('auth-token',response.user.authentication_token);
                 sessionStorage.setItem('email',this.email);
-                // this.$bus.$emit('logged_in','User logged in')
-                this.$router.push('dashboard')
-            //     fetch("http://127.0.0.1:5000/api/user", {
-            //   method: "GET",
-            //   headers: {
-            //          'Content-Type':'application/json;charset=utf-8',
-            //          'Authentication-Token':response.user.authentication_token
-            //    }
-            // })
-            //     .then(r => console.log(r.json()))
-                
-                
+                this.$router.push('dashboard')              
               }
             }
             )
