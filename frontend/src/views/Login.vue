@@ -1,5 +1,9 @@
 <template>
   <div class="container ">
+    <!-- <div class="alert alert-danger" role="alert"> -->
+   <p class="alert alert-danger" role="alert" v-if="error_email">{{error_email}}</p>
+   <p class="alert alert-danger" role="alert" v-if="error_password">{{error_password}}</p>
+<!-- </div> -->
           <div class="row">
             <div class="col">
             </div>
@@ -18,7 +22,6 @@
                   autocomplete="off">
                 </div>
               </div>
-              <p v-if="error_email">{{error_email}}</p>
               <br>
               <div class="form-row">
                 <div class="form-group">
@@ -32,7 +35,6 @@
                   autocomplete="off">
                 </div>
               </div>
-              <p v-if="error_password">{{error_password}}</p>
               <br>
               <button @click="login" class="btn btn-primary">Sign in</button>
             </div>
@@ -63,7 +65,6 @@ export default {
                },
                body: JSON.stringify({email:this.email,password:this.password})
             }).then(resp =>{ 
-              console.log("in 83")
             return resp.json()
             })
             .then(async (login_data) => {
