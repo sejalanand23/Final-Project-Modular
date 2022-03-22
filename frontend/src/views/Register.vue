@@ -1,24 +1,13 @@
 <template>
 <div class="container ">
+   <p class="alert alert-danger" role="alert" v-if="error_email">{{error_email}}</p>
+   <p class="alert alert-danger" role="alert" v-if="error_password">{{error_password}}</p>
           <div class="row">
             <div class="col">
             </div>
             <div class="col-5">
             <br>
             <h2 class = 'title' align ='center'> Create new account </h2>
-              <div class="form-row">
-                <div class="form-group">
-                  <input 
-                  type="text" 
-                  class="form-control" 
-                  name = "username" 
-                  id = "username" 
-                  v-model = "username" 
-                  required 
-                  placeholder="username" 
-                  autocomplete="off">
-                </div>
-              </div>
               <br>
           <div class="form-row">
             <div class="form-group">
@@ -46,19 +35,6 @@
             </div>
         </div>
         <br>
-        <div class="form-row">
-            <div class="form-group">
-              <input type="password" 
-              class="form-control" 
-              name = "confirmpassword" 
-              id = "confirmpassword" 
-              v-model = "confirmPassword" 
-              required 
-              placeholder="Confirm password" 
-              autocomplete="off">
-            </div>
-        </div>
-        <br>
               <button @click="register()" class="btn btn-primary">Register</button>
         </div>
             <div class="col">
@@ -72,15 +48,46 @@ export default {
     name: 'register',
     data(){
         return {
-            username : "",
             email : "",
             password : "",
-            confirmPassword : ""
+            error_email : "",
+            error_password : "",
         }
     },
     methods: {
-        register: function(){
-            console.log(this.username,this.email, this.password, this.confirmPassword)
+        async register(){
+          try{
+            const fetched_data = fetch("http://127.0.0.1:5000/register",{
+              method: "POST",
+              headers: {
+                     'Content-Type':'application/json;charset=utf-8'
+               },
+               body: JSON.stringify({email:this.email,password:this.password})
+            })
+            .then(
+              resp => {
+                return resp.json()
+              })
+              .then(async (register_data) => {
+                const {response} = register_data
+                if (response.errors){
+                const {email,password} = response.errors;
+                console.log({email,password});
+                this.error_email = email ? email[0]:""
+                this.error_password = password ? password[0]:""
+                console.log(this.error_email,this.error_password)
+              }
+              else{
+                this.$router.push('login')
+              }
+              })
+              .catch(error => {
+              console.log(error);
+            });
+          }
+          catch(error){
+            console.log("Registration unsuccessful: " , error)
+          }
         }
     }
 }
