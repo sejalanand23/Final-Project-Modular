@@ -15,13 +15,14 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
-              <router-link to="/" class = "nav-link">Home</router-link>
-            </li>
-          </ul>
-          <router-link to="/login" class = "nav-link nav-item">Login</router-link>
-          <router-link class="btn btn-secondary" to ="/register">Register</router-link> 
+          <div class="navbar-nav me-auto mb-2 mb-lg-0">
+            <!-- <li class="nav-item"> -->
+              <!-- <router-link to="/" class = "nav-item">Home</router-link> -->
+              <router-link class="nav-item btn btn-light" to ="/">Home</router-link> 
+            <!-- </li> -->
+          </div>
+          <router-link class="nav-item btn btn-light" to ="/login">Login</router-link> 
+          <router-link class="nav-item btn btn-light" to ="/register">Register</router-link> 
         </div>
       </div>
     </nav>
@@ -29,6 +30,7 @@
     <router-view />
   </div>
 </template>
+
 
 <style>
 #app {
@@ -41,6 +43,7 @@
 
 nav {
   padding: 30px;
+  text-align: center;
 }
 
 nav a {
@@ -48,7 +51,13 @@ nav a {
   color: #2c3e50;
 }
 
+nav-brand{
+  font-weight: bold;
+}
+
 nav a.router-link-exact-active {
-  color: #42b983;
+  /* color: #42b983; */
+  cursor: pointer;
+  font-weight: 700;
 }
 </style>
