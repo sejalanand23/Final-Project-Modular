@@ -24,7 +24,7 @@
           <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
           <router-link v-if="isLogged === false" class="btn btn-outline-dark" to ="/register">Register</router-link> 
           <span v-if="isLogged === true" class="navbar-text">
-              User Logged in: {{this.email_id}}
+              User Logged in: {{this.email}}
           </span>
           <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
           <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button>
@@ -41,19 +41,13 @@
 <script>
 export default {
   name : "navbar",
-  props: { email_id: String },
+  // props: ['email_id'],
     data() {
         return {
             auth_token : "",
             isLogged: this.checkIfIsLogged(),
-            email : this.email_id,
+            email : sessionStorage.getItem('email')
         }
-    },
-    beforeMount() {
-      let email_storage = sessionStorage.getItem('email')
-      if (email_storage){
-        this.email = email
-      }
     },
   methods : {
     logout(){
