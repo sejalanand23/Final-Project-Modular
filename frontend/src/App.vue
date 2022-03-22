@@ -12,17 +12,24 @@
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span class="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon " ></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
           <div class="navbar-nav me-auto mb-2 mb-lg-0">
-            <!-- <li class="nav-item"> -->
-              <!-- <router-link to="/" class = "nav-item">Home</router-link> -->
-              <router-link class="nav-item btn btn-light" to ="/">Home</router-link> 
-            <!-- </li> -->
+              <router-link class="btn btn-light" to ="/">Home</router-link> 
+              <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+              <router-link v-if="isLogged === true" class="btn btn-light" to ="/dashboard">Dashboard</router-link> 
           </div>
-          <router-link class="nav-item btn btn-light" to ="/login">Login</router-link> 
-          <router-link class="nav-item btn btn-light" to ="/register">Register</router-link> 
+          <router-link v-if="isLogged === false" class="btn btn-outline-dark" to ="/login">Login</router-link> 
+          <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+          <router-link v-if="isLogged === false" class="btn btn-outline-dark" to ="/register">Register</router-link> 
+          <span v-if="isLogged === true" class="navbar-text">
+              User Logged in: {{this.email_id}}
+          </span>
+          <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
+          <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button>
+          <!-- <p v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark justify-content-center" >Logout</p> -->
+          <!-- <router-link v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark" to ="/">Logout</router-link>  -->
         </div>
       </div>
     </nav>
@@ -31,6 +38,48 @@
   </div>
 </template>
 
+<script>
+export default {
+  name : "navbar",
+  props: { email_id: String },
+    data() {
+        return {
+            auth_token : "",
+            isLogged: this.checkIfIsLogged(),
+            email : this.email_id
+        }
+    },
+    beforeMount() {
+      let email = sessionStorage.getItem('email')
+      if (email){
+        this.email = email
+        this.isLogged = this.checkIfIsLogged();
+      }
+    },
+  methods : {
+    logout(){
+      try{
+        sessionStorage.clear();
+        this.isLogged = this.checkIfIsLogged();
+        console.log(this.isLogged)
+        this.$router.push('/');
+          }
+          catch(error){
+            console.log(error)
+          }
+      },
+      checkIfIsLogged(){
+        let token = sessionStorage.getItem('auth-token')
+        if (token){
+          return true
+        }
+        else{
+          return false
+        }
+      }
+    }
+  }
+</script>
 
 <style>
 #app {
@@ -59,5 +108,10 @@ nav a.router-link-exact-active {
   /* color: #42b983; */
   cursor: pointer;
   font-weight: 700;
+}
+
+btn-outline-dark {
+    margin-right: 5px;
+    margin-bottom: 5px
 }
 </style>

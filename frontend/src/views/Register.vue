@@ -36,6 +36,8 @@
         </div>
         <br>
               <button @click="register()" class="btn btn-primary">Register</button>
+        <br><br>
+        <p>Already have an account? Go to <a href="login">Login</a></p>
         </div>
             <div class="col">
             </div>

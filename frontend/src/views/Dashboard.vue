@@ -5,10 +5,18 @@
 <script>
 export default {
   name : 'dashboard',
-  beforeMount(){
-    console.log(sessionStorage.getItem('auth-token'))
-    console.log(sessionStorage.getItem('email'))
+  props: { email_id : String },
+  data() {
+    return {
+      email : ""
+    }
+  },
+  created(){
+    // console.log(sessionStorage.getItem('auth-token'))
+    this.email = sessionStorage.getItem('email')
+    console.log(this.email)
   }
+
 }
 </script>
 

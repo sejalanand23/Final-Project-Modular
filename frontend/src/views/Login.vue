@@ -1,9 +1,7 @@
 <template>
-  <div class="container ">
-    <!-- <div class="alert alert-danger" role="alert"> -->
+  <div class="container ">   
    <p class="alert alert-danger" role="alert" v-if="error_email">{{error_email}}</p>
    <p class="alert alert-danger" role="alert" v-if="error_password">{{error_password}}</p>
-<!-- </div> -->
           <div class="row">
             <div class="col">
             </div>
@@ -37,6 +35,8 @@
               </div>
               <br>
               <button @click="login" class="btn btn-primary">Sign in</button>
+              <br><br>
+        <p>New User? <a href="register">Create</a> a new account.</p>
             </div>
             <div class="col">
             </div>
@@ -45,14 +45,18 @@
 </template>
 
 <script>
+import { computed } from '@vue/runtime-core';
 export default {
     name: 'login',
+    // props: { authenticated: Boolean },
     data() {
       return {
         email : "",
         password : "",
         error_email : "",
         error_password : "",
+        auth : "",
+        is_authenticated : false
       }
   },
     methods: {
@@ -76,11 +80,12 @@ export default {
                 this.error_password = password ? password[0]:""
                 console.log(this.error_email,this.error_password)
               }
-              else{
-                // document.cookie = `auth_token=${response.user.authentication_token}`;
+              else{     
+                console.log('login');
+                this.auth = response.user.authentication_token;
+                sessionStorage.setItem('auth-token',response.user.authentication_token);
+                sessionStorage.setItem('email',this.email);
                 this.$router.push('dashboard')
-                sessionStorage.setItem('auth-token',response.user.authentication_token)
-                sessionStorage.setItem('email',this.email)
             //     fetch("http://127.0.0.1:5000/api/user", {
             //   method: "GET",
             //   headers: {
@@ -102,7 +107,12 @@ export default {
             console.log("Can't login in: " , error)
           }
         }
-    }
+    },
+    // computed: {
+    //   if (this.auth){
+    //     this.authenticated = true;
+    //   }
+    // }
 }
 </script>
 
