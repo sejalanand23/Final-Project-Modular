@@ -27,7 +27,6 @@
               User Logged in: {{this.email}}
           </span>
           <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
-          <!-- <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button> -->
          <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button>
         </div>
       </div>
@@ -68,16 +67,6 @@ export default {
             console.log(error)
           }
       },
-      // checkIfIsLogged(){
-      //   let token = sessionStorage.getItem('auth-token')
-      //   if (token){
-      //     return true
-          
-      //   }
-      //   else{
-      //     return false
-      //   }
-      // }
     }
   }
 </script>
