@@ -82,7 +82,7 @@ export default {
                 this.auth = response.user.authentication_token;
                 sessionStorage.setItem('auth-token',response.user.authentication_token);
                 sessionStorage.setItem('email',this.email);
-                this.$router.push('dashboard')              
+                this.$router.push('dashboard')            
               }
             }
             )

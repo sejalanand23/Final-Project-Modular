@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div :key="isLogged" id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Flashcard Application</a>
@@ -27,9 +27,8 @@
               User Logged in: {{this.email}}
           </span>
           <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
-          <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button>
-          <!-- <p v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark justify-content-center" >Logout</p> -->
-          <!-- <router-link v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark" to ="/">Logout</router-link>  -->
+          <!-- <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button> -->
+         <button v-if="isLogged === true" v-on:click="logout()" class="btn btn-outline-dark">Logout</button>
         </div>
       </div>
     </nav>
@@ -41,12 +40,22 @@
 <script>
 export default {
   name : "navbar",
-  // props: ['email_id'],
     data() {
         return {
             auth_token : "",
-            isLogged: this.checkIfIsLogged(),
+            isLogged: false,
             email : sessionStorage.getItem('email')
+        }
+    },
+    updated() {
+        let token = sessionStorage.getItem('auth-token')
+        if (token){
+          this.isLogged = true;
+          console.log(this.isLogged)
+          
+        }
+        else{
+          this.isLogged = false;
         }
     },
   methods : {
@@ -59,15 +68,16 @@ export default {
             console.log(error)
           }
       },
-      checkIfIsLogged(){
-        let token = sessionStorage.getItem('auth-token')
-        if (token){
-          return true
-        }
-        else{
-          return false
-        }
-      }
+      // checkIfIsLogged(){
+      //   let token = sessionStorage.getItem('auth-token')
+      //   if (token){
+      //     return true
+          
+      //   }
+      //   else{
+      //     return false
+      //   }
+      // }
     }
   }
 </script>

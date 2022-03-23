@@ -63,19 +63,19 @@ export default {
       auth_token : ""
     }
   },
-  beforeMount(){
-    this.auth_token = sessionStorage.getItem('auth-token')
-    this.email = sessionStorage.getItem('email')
-    console.log(this.email)
-    fetch("http://127.0.0.1:5000/api/<>user", {
-              method: "GET",
-              headers: {
-                     'Content-Type':'application/json;charset=utf-8',
-                     'Authentication-Token':response.user.authentication_token
-               }
-            })
-                .then(r => console.log(r.json()))
-  }
+  // beforeMount(){
+  //   this.auth_token = sessionStorage.getItem('auth-token')
+  //   this.email = sessionStorage.getItem('email')
+  //   console.log(this.email)
+  //   fetch("http://127.0.0.1:5000/api/<>user", {
+  //             method: "GET",
+  //             headers: {
+  //                    'Content-Type':'application/json;charset=utf-8',
+  //                    'Authentication-Token':response.user.authentication_token
+  //              }
+  //           })
+  //               .then(r => console.log(r.json()))
+  // }
 
 }
 </script>
