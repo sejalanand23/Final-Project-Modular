@@ -16,7 +16,7 @@
         </button>
         <div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
           <div class="navbar-nav me-auto mb-2 mb-lg-0">
-              <router-link class="btn btn-light" to ="/">Home</router-link> 
+              <router-link v-if="isLogged === false" class="btn btn-light" to ="/">Home</router-link> 
               <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
               <router-link v-if="isLogged === true" class="btn btn-light" to ="/dashboard">Dashboard</router-link> 
           </div>
@@ -46,11 +46,20 @@ export default {
             email : sessionStorage.getItem('email')
         }
     },
+    mounted() {
+        let token = sessionStorage.getItem('auth-token')
+        if (token){
+          this.isLogged = true;
+          
+        }
+        else{
+          this.isLogged = false;
+        }
+    },
     updated() {
         let token = sessionStorage.getItem('auth-token')
         if (token){
           this.isLogged = true;
-          console.log(this.isLogged)
           
         }
         else{
