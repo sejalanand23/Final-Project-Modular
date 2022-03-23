@@ -63,19 +63,21 @@ export default {
       auth_token : ""
     }
   },
-  // beforeMount(){
-  //   this.auth_token = sessionStorage.getItem('auth-token')
-  //   this.email = sessionStorage.getItem('email')
-  //   console.log(this.email)
-  //   fetch("http://127.0.0.1:5000/api/<>user", {
-  //             method: "GET",
-  //             headers: {
-  //                    'Content-Type':'application/json;charset=utf-8',
-  //                    'Authentication-Token':response.user.authentication_token
-  //              }
-  //           })
-  //               .then(r => console.log(r.json()))
-  // }
+  mounted(){
+    this.auth_token = sessionStorage.getItem('auth-token')
+    this.email = sessionStorage.getItem('email')
+    console.log(this.email)
+    fetch(`http://127.0.0.1:5000/api/deck/${this.email}`, {
+              method: "GET",
+              headers: {
+                     'Content-Type':'application/json;charset=utf-8',
+                     'Authentication-Token': `${this.auth_token}`
+               }
+            })
+                .then(res => res.json())
+                .then(data => console.log(data))
+                .catch(error => console.log(error))
+  }
 
 }
 </script>
