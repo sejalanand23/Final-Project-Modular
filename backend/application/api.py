@@ -85,22 +85,17 @@ class UserResource(Resource):
 class DeckResource(Resource):
     @marshal_with(deck_fields)
     @auth_required("token")
-    def get(self,email,deck_name):
+    def get(self,email):
         user = User.query.filter_by(email = email).first()
         if not user:
             abort(404, "User does not exist")
         else:
-            uid = user.id     
-            #get decks by current user
-            decks = Deck.query.filter_by(deck_name = deck_name, ).all()   #get all decks with this name
-            deck_foreign = UserDeckRelation.query.filter_by(userUCR_foreignid = uid).all()
-            if deck_foreign: # if current user has created any decks
-                if decks: # if there are any decks with this deck name 
-                    for deck in decks:
-                        for deck_ in deck_foreign:
-                            if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered 
-                                return deck,200
-            abort(404,"Deck Not Found")
+            uid = user.id  
+            deck_ids = db.session.query( UserDeckRelation).with_entities(UserDeckRelation.deckUCR_foreignid).filter(UserDeckRelation.userUCR_foreignid == uid).all()
+            ids = [id for (id,) in deck_ids]
+            decks = db.session.query(Deck).filter(Deck.deck_id.in_(ids)).all()
+            return decks,200
+            abort(404,"No Deck Found")
                     
 
     @marshal_with(deck_fields)
