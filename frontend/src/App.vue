@@ -18,7 +18,8 @@
           <div class="navbar-nav me-auto mb-2 mb-lg-0">
               <router-link v-if="isLogged === false" class="btn btn-light" to ="/">Home</router-link> 
               <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
-              <router-link v-if="isLogged === true" class="btn btn-light" to ="/dashboard">Dashboard</router-link> 
+              <router-link v-if="isLogged === true" class="btn btn-light" to ="/dashboard">Dashboard</router-link>
+  
           </div>
           <router-link v-if="isLogged === false" class="btn btn-outline-dark" to ="/login">Login</router-link> 
           <div class="col-sm-1 col-xs-1 col-md-1 col-lg-1"></div>
@@ -43,14 +44,14 @@ export default {
         return {
             auth_token : "",
             isLogged: false,
-            email : sessionStorage.getItem('email')
+            email : ''
         }
     },
     mounted() {
         let token = sessionStorage.getItem('auth-token')
         if (token){
           this.isLogged = true;
-          
+          this.email = sessionStorage.getItem('email')
         }
         else{
           this.isLogged = false;
@@ -60,6 +61,7 @@ export default {
         let token = sessionStorage.getItem('auth-token')
         if (token){
           this.isLogged = true;
+          this.email = sessionStorage.getItem('email')
           
         }
         else{
@@ -107,6 +109,10 @@ nav a.router-link-exact-active {
   /* color: #42b983; */
   cursor: pointer;
   font-weight: 700;
+}
+
+.btn {
+  white-space: nowrap
 }
 
 btn-outline-dark {
