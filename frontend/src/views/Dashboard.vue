@@ -11,8 +11,8 @@
         <th>Last score</th>
         <th>Average Score</th>
         <th>Edit Deck</th>
-        <th>Delete</th>
-        <th>Start Quiz</th>
+        <th>Delete Delete</th>
+        <th>Take Quiz</th>
       </tr>
     </thead>
     <tbody>
@@ -24,9 +24,9 @@
       <td>{{deck.time}}</td>
       <td>{{deck.correct}}</td>
       <td>{{deck.deck_average_score}}</td>
-      <td><button @click="editDeck" class="btn btn-outline-dark">Edit Deck</button></td>
-      <td><button @click="deleteDeck" class="btn btn-outline-dark">Delete</button></td>
-      <td><button @click="quiz" class="btn btn-outline-dark">Take Quiz</button></td>
+      <td><button class="btn btn-outline-dark"> <router-link style="text-decoration: none; color: inherit;" :to ="`/dashboard/deck/${deck.deck_name}/edit`">Edit</router-link> </button></td>
+      <td><button @click="deleteDeck(deck.deck_name)" class="btn btn-outline-dark">Delete</button></td>
+      <td><button @click="quiz" class="btn btn-outline-dark">Start Quiz</button></td>
       </tr>
     </tbody> 
   </table>
@@ -64,7 +64,7 @@ export default {
                 .catch(error => console.log(error))
   },
   methods : {
-    async deleteDeck(){
+    async deleteDeck(deck_name){
       try {
             const deck_data = fetch("http://127.0.0.1:5000/api/deck", {
               method: "DELETE",
@@ -72,12 +72,11 @@ export default {
                      'Content-Type':'application/json;charset=utf-8',
                      'Authentication-Token': `${this.auth_token}`
                },
-               body: JSON.stringify({email:this.email,deck_name:this.deck_name})
+               body: JSON.stringify({email:this.email,deck_name:deck_name})
             }).then(resp =>{ 
                 return resp.json()
             })
             .then(async (deck_data) => {
-                console.log({deck_data})
               const response = deck_data 
               console.log(response)
               if (!response){
@@ -86,7 +85,8 @@ export default {
               }
               else{     
 
-                  console.log('Deck Deleted')        
+                  console.log('Deck Deleted')
+                  this.$router.go()        
               }
             }
             )
@@ -104,5 +104,8 @@ export default {
 </script>
 
 <style>
+.btn {
+  white-space: nowrap
+}
 
 </style>
