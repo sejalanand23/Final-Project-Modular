@@ -1,6 +1,7 @@
 <template>
 <div class="container ">   
    <p class="alert alert-danger" role="alert" v-if="error_message">{{error_message}}</p>
+   <p class="alert alert-success" role="alert" v-if="success_message">{{success_message}}</p>
           <div class="row">
             <div class="col">
             </div>
@@ -51,7 +52,8 @@ export default {
             card_back : "",
             deck : [],
             email : '',
-            error_message : ''
+            error_message : '',
+            success_message : ''
         }
     },
     created(){
@@ -86,10 +88,9 @@ export default {
                 console.log(response.message)
               }
               else{     
-                  // this.deck = deck_data
-                  // console.log(this.deck)
+                  this.success_message = "Card added successfully. Add Another"
                   console.log('Card Added')
-                // this.$router.push({name: 'AddCards', params: {deck_data: this.deck}})         
+
               }
             }
             )
@@ -101,6 +102,9 @@ export default {
             console.log(error)
           }
         } 
+        this.card_front = ''
+        this.card_back = ''
+        this.success_message = ''
         }
     }
 
