@@ -7,6 +7,7 @@ import Dashboard from "../views/Dashboard.vue";
 import CreateDeck from "../views/CreateDeck.vue";
 import AddCards from "../views/AddCards.vue";
 import EditDeck from "../views/EditDeck.vue";
+import EditCards from "../views/EditCards.vue";
 
 Vue.use(VueRouter);
 
@@ -45,6 +46,11 @@ const routes = [
     path: "/dashboard/deck/:deck_name/edit",
     name : "EditDeck",
     component : EditDeck
+  },
+  {
+    path: "/dashboard/deck/:deck_name/edit/cards",
+    name : "EditCards",
+    component : EditCards
   },
   {
     path: "/about",
