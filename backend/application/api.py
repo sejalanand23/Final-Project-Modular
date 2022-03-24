@@ -81,6 +81,17 @@ class UserResource(Resource):
             db.session.commit()
             return u, 201
 
+class UserDeckResource(Resource):
+    @marshal_with(user_deck_fields)
+    @auth_required("token")
+    def get(self,email):
+        user = User.query.filter_by(email = email).first()
+        if not user:
+            abort(404, "User does not exist")
+        else:
+            uid = user.id
+            decks = db.session.query(UserDeckRelation).filter(UserDeckRelation.userUCR_foreignid == uid).all()
+            return decks,200
 
 class DeckResource(Resource):
     @marshal_with(deck_fields)
