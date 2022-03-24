@@ -4,6 +4,8 @@ import HomeView from "../views/HomeView.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
+import CreateDeck from "../views/CreateDeck.vue";
+import AddCards from "../views/AddCards.vue";
 
 Vue.use(VueRouter);
 
@@ -27,6 +29,16 @@ const routes = [
     path: "/dashboard",
     name : "dashboard",
     component : Dashboard
+  },
+  {
+    path: "/createDeck",
+    name : "createDeck",
+    component : CreateDeck
+  },
+  {
+    path: "/addCards",
+    name : "AddCards",
+    component : AddCards
   },
   {
     path: "/about",
