@@ -95,6 +95,9 @@ class Deck(db.Model):
   deck_name = db.Column(db.String(100), nullable = False)
   deck_total_score = db.Column(db.Integer)
   deck_average_score = db.Column(db.Float)
+  correct = db.Column(db.Integer)
+  time = db.Column(db.String(100))
+  quiz_count = db.Column(db.Integer)
   card_deck = db.relationship('CardDeckRelation', backref = 'deck',cascade="all,delete")
   user_deck = db.relationship('UserDeckRelation', backref = 'deck',cascade="all,delete")
 
@@ -102,7 +105,10 @@ deck_fields = {
     'deck_id' : fields.Integer,
     'deck_name' : fields.String,
     'deck_total_score' : fields.Integer,
-    'deck_average_score' : fields.Float
+    'deck_average_score' : fields.Float,
+    'correct' : fields.Integer,
+    'time' : fields.String,
+    'quiz_count' : fields.Integer,
 }
   
 class UserDeckRelation(db.Model):
