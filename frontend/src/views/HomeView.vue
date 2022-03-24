@@ -1,7 +1,11 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+    <br>
+    <pre><blockquote class="blockquote"> Make Flashcards online. Track your progress. </blockquote></pre>
+    <br>
+    <img alt="Vue logo" src="../assets/home.jpeg" height="450" width="800" />
+    
+     <br><br> 
   </div>
 </template>
 
@@ -16,3 +20,11 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.blockquote{
+  max-width: 100%;
+  font-size: xx-large;
+}
+
+</style>
