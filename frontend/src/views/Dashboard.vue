@@ -10,7 +10,9 @@
         <th>Last Reviewed at</th>
         <th>Last score</th>
         <th>Average Score</th>
-        <th>Edit Deck</th>
+        <th>Add Cards</th>
+        <th>Edit Deck Name</th>
+        <th>View/Edit Cards</th>
         <th>Delete Delete</th>
         <th>Take Quiz</th>
       </tr>
@@ -24,7 +26,17 @@
       <td>{{deck.time}}</td>
       <td>{{deck.correct}}</td>
       <td>{{deck.deck_average_score}}</td>
+      <td><button class="btn btn-outline-dark"> 
+        <router-link style="text-decoration: none; color: inherit;" :to ="{name: 'AddCards', params: {deck_data: deck}}">
+        Add Cards
+        </router-link> 
+    </button></td>
       <td><button class="btn btn-outline-dark"> <router-link style="text-decoration: none; color: inherit;" :to ="`/dashboard/deck/${deck.deck_name}/edit`">Edit</router-link> </button></td>
+      <td><button class="btn btn-outline-dark"> 
+        <router-link style="text-decoration: none; color: inherit;" :to ="`/dashboard/deck/${deck.deck_name}/edit/cards`">
+        View/Edit
+        </router-link> 
+    </button></td>
       <td><button @click="deleteDeck(deck.deck_name)" class="btn btn-outline-dark">Delete</button></td>
       <td><button @click="quiz" class="btn btn-outline-dark">Start Quiz</button></td>
       </tr>
