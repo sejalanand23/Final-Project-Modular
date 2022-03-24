@@ -239,15 +239,14 @@ class CardResource(Resource):
                     card = Card.query.filter_by(card_front = card_args.card_front).first()
                     if card:
                         abort(409, "Card already exists")
-                    else:
-                        new_card = Card(card_front = card_args.card_front, card_back = card_args.card_back)
-                        db.session.add(new_card)
-                        db.session.commit()
-                        cid = new_card.card_id
-                        card_deck_info = CardDeckRelation(cardCDR_foreignid = cid, deckCDR_foreignid = deck_info.deckUCR_foreignid)
-                        db.session.add(card_deck_info)
-                        db.session.commit()
-                        return "Card added successfully", 200
+        new_card = Card(card_front = card_args.card_front, card_back = card_args.card_back)
+        db.session.add(new_card)
+        db.session.commit()
+        cid = new_card.card_id
+        card_deck_info = CardDeckRelation(cardCDR_foreignid = cid, deckCDR_foreignid = deck_info.deckUCR_foreignid)
+        db.session.add(card_deck_info)
+        db.session.commit()
+        return "Card added successfully", 200
          
     @auth_required("token")
     def delete(self,card_id):
