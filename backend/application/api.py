@@ -126,7 +126,7 @@ class DeckResource(Resource):
                 for deck in decks:
                     for deck_ in deck_foreign:
                         if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered 
-                            abort(409, "User has already created a deck with this name.")
+                            abort(409, "You have already created a deck with this name.")
         
         #creating deck
         new_deck_data = Deck(deck_name = deck_data['deck_name']) #Enter deck into deck table
