@@ -141,10 +141,10 @@ class DeckResource(Resource):
     # @marshal_with(deck_fields)
     @auth_required("token")
     def put(self, deck_name = None):
+        deck_data = deck_post_parser.parse_args()
         if not deck_name:
             abort(400, "Old Deck name not specified")
-        else:
-            deck_data = deck_post_parser.parse_args()
+        else:  
             email = deck_data['email']
             user = User.query.filter_by(email = email).first()
             uid = user.id
