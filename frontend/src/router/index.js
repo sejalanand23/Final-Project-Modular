@@ -6,6 +6,7 @@ import Register from "../views/Register.vue";
 import Dashboard from "../views/Dashboard.vue";
 import CreateDeck from "../views/CreateDeck.vue";
 import AddCards from "../views/AddCards.vue";
+import EditDeck from "../views/EditDeck.vue";
 
 Vue.use(VueRouter);
 
@@ -39,6 +40,11 @@ const routes = [
     path: "/addCards",
     name : "AddCards",
     component : AddCards
+  },
+  {
+    path: "/dashboard/deck/:deck_name/edit",
+    name : "EditDeck",
+    component : EditDeck
   },
   {
     path: "/about",
