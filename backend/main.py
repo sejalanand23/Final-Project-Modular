@@ -49,7 +49,7 @@ from application.controllers import *
 
 from application.api import *
 api.add_resource(UserResource, "/api/user", "/api/user/<email>")
-api.add_resource(DeckResource, "/api/deck","/api/deck/<email>")
+api.add_resource(DeckResource, "/api/deck","/api/deck/<email>","/api/deck/edit/<deck_name>")
 api.add_resource(CardResource, "/api/card/<card_id>", "/api/card")
 api.add_resource(QuizResource,"/api/quiz/<email>/<deck_name>")
 api.add_resource(UserDeckResource,"/api/<email>/decks_info")
