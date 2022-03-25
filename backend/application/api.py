@@ -1,19 +1,11 @@
-from turtle import back
-from urllib import request
-from flask_restful import Resource, Api, marshal
-from flask_restful import fields, marshal_with
-from flask_restful import reqparse
+from flask_restful import Resource,marshal_with,reqparse
 from flask_security import auth_required
-from sympy import re
-from application.validation import BusinessValidationError, NotFoundError
 from application.models import *
 from application.database import db
-from flask import current_app as app
-import werkzeug
+import time
 from flask import abort
 
 user_parser = reqparse.RequestParser()
-# user_parser.add_argument('id',type=int)
 user_parser.add_argument('email',type = str,required = True)
 user_parser.add_argument('password',type = str)
 
@@ -22,7 +14,6 @@ deck_post_parser.add_argument('email',type = str,required = True)
 deck_post_parser.add_argument('deck_name',type = str, required = True)
 
 card_parser = reqparse.RequestParser()
-# card_parser.add_argument('card_id',db.Integer)
 card_parser.add_argument('card_front',type = str)
 card_parser.add_argument('card_back',type = str)
 card_parser.add_argument('difficulty',type = str)
@@ -34,25 +25,11 @@ card_post_parser.add_argument('card_back',type = str,required = True, help = "Ca
 card_post_parser.add_argument('deck_id',type = int, required = True, help = "Deck Info is Required")
 
 deck_parser = reqparse.RequestParser()
-# deck_parser.add_argument('deck_id',db.Integer)
 deck_parser.add_argument('deck_name',type = str, required = True)
-# deck_parser.add_argument('deck_total_score',type = int)
-# deck_parser.add_argument('deck_average_score',type = float)
 
-user_deck_parser = reqparse.RequestParser()
-user_deck_parser.add_argument('correct',type=int)
-user_deck_parser.add_argument('time',type=str)
-user_deck_parser.add_argument('quiz_count',type=int)
-user_deck_parser.add_argument('user_deck_relation_id',type = int)
-user_deck_parser.add_argument('userUCR_foreignid',type = int)
-user_deck_parser.add_argument('deckUCR_foreignid',type = int)
-
-card_deck_parser = reqparse.RequestParser()
-card_deck_parser.add_argument('card_deck_relation_id',type = int)
-card_deck_parser.add_argument('cardCDR_foreignid',type = int)
-card_deck_parser.add_argument('deckCDR_foreignid',type = int)
-
-
+score_parser = reqparse.RequestParser()
+score_parser.add_argument('deck_id',type = int, required = True)
+score_parser.add_argument('correct',type = int, required = True)
 
 class UserResource(Resource):
     @auth_required("token")
@@ -281,3 +258,17 @@ class QuizResource(Resource):
                                 return cards,200
 
             abort(404,"Deck Not Found")
+
+class ScoreResource(Resource):
+    @auth_required("token")
+    def put(self):    
+        score_data = score_parser.parse_args()
+        deck = Deck.query.filter_by(deck_id = score_data.deck_id).first()
+        deck.correct = score_data['correct']
+        deck.time = time.ctime()
+        deck.quiz_count = deck.quiz_count + 1
+        deck.deck_total_score = deck.deck_total_score + score_data['correct']
+        deck.deck_average_score = (deck.deck_total_score + score_data['correct']) / (deck.quiz_count + 1)
+        db.session.merge(deck)
+        db.session.commit()
+        return "Score updated",200
