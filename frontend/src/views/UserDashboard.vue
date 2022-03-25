@@ -23,9 +23,21 @@
       <tbody>
         <tr v-for="deck in decks" :key="deck.deck_id">
           <td>{{ deck.deck_name }}</td>
-          <td>{{ deck.time }}</td>
-          <td>{{ deck.correct }}</td>
-          <td>{{ deck.deck_average_score }}</td>
+          <td>{{ deck.time ? deck.time : "No quiz taken" }}</td>
+          <td>
+            {{
+              deck.quiz_count != 0
+                ? deck.correct.toFixed(2) + "%"
+                : "No quiz taken"
+            }}
+          </td>
+          <td>
+            {{
+              deck.deck_average_score != null
+                ? deck.deck_average_score.toFixed(2) + "%"
+                : "No quiz taken"
+            }}
+          </td>
           <td>
             <button class="btn btn-outline-dark">
               <router-link
@@ -64,7 +76,7 @@
             </button>
           </td>
           <td>
-            <button class="btn btn-outline-dark">
+            <button class="btn btn-outline-dark" @click="storeID(deck.deck_id)">
               <router-link
                 style="text-decoration: none; color: inherit"
                 :to="`/dashboard/deck/${deck.deck_name}/quiz`"
@@ -94,6 +106,7 @@ export default {
     };
   },
   async created() {
+    sessionStorage.removeItem("deck_id");
     this.auth_token = sessionStorage.getItem("auth-token");
     this.email = sessionStorage.getItem("email");
     console.log(this.email);
@@ -141,6 +154,9 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    storeID(deck_id) {
+      sessionStorage.setItem("deck_id", deck_id);
     },
   },
 };
