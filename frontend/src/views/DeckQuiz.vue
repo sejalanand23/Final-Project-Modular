@@ -72,9 +72,7 @@
       <div class="col"></div>
       <div class="col-5">
         <br />
-        <h2 class="title" align="center">
-          Your score is: {{ this.score }} out of {{ this.total }}
-        </h2>
+        <h2 class="title" align="center">Your score is: {{ this.score }}%</h2>
       </div>
       <div class="col"></div>
     </div>
@@ -101,6 +99,8 @@ export default {
       a: 0,
       b: 1,
       score: 0,
+      correct: 0,
+      deck_id: 0,
     };
   },
 
@@ -128,12 +128,10 @@ export default {
   methods: {
     submit(card_back) {
       this.card_back = card_back;
-      console.log(this.card_back);
-      console.log(this.answer);
       this.answered = true;
       if (this.card_back.toLowerCase() == this.answer.toLowerCase()) {
         this.success_message = "Correct Answer! 👍 ";
-        this.score++;
+        this.correct++;
       } else {
         this.incorrect_message = `Wrong Answer ❌ The correct answer is: ${this.card_back}`;
       }
@@ -146,16 +144,45 @@ export default {
       if (this.b + 1 <= this.total) {
         this.a++;
         this.b++;
-        console.log(this.b);
         this.success_message = "";
         this.incorrect_message = "";
         this.answered = false;
       }
     },
-    result() {
+    async result() {
+      this.score = (this.correct / this.total) * 100;
       this.success_message = "";
       this.incorrect_message = "";
       this.quiz_mode = false;
+      this.deck_id = sessionStorage.getItem("deck_id");
+      try {
+        console.log(this.deck_id);
+        fetch(`http://127.0.0.1:5000/api/deck/scoring`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Authentication-Token": `${this.auth_token}`,
+          },
+          body: JSON.stringify({
+            deck_id: this.deck_id,
+            correct: this.score,
+          }),
+        })
+          .then((resp) => {
+            return resp.json();
+          })
+          .then((deck_data) => {
+            const response = deck_data;
+            if (response.message) {
+              console.log(response.message);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } catch (error) {
+        console.log(error);
+      }
     },
   },
 };
