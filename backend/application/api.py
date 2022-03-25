@@ -268,7 +268,7 @@ class ScoreResource(Resource):
         deck.time = time.ctime()
         deck.quiz_count = deck.quiz_count + 1
         deck.deck_total_score = deck.deck_total_score + score_data['correct']
-        deck.deck_average_score = (deck.deck_total_score + score_data['correct']) / (deck.quiz_count + 1)
+        deck.deck_average_score = deck.deck_total_score/ deck.quiz_count
         db.session.merge(deck)
         db.session.commit()
         return "Score updated",200
