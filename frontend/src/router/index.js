@@ -3,11 +3,12 @@ import VueRouter from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
-import Dashboard from "../views/Dashboard.vue";
+import UserDashboard from "../views/UserDashboard.vue";
 import CreateDeck from "../views/CreateDeck.vue";
 import AddCards from "../views/AddCards.vue";
 import EditDeck from "../views/EditDeck.vue";
 import EditCards from "../views/EditCards.vue";
+import DeckQuiz from "../views/DeckQuiz.vue";
 
 Vue.use(VueRouter);
 
@@ -19,38 +20,43 @@ const routes = [
   },
   {
     path: "/login",
-    name: "login",
+    name: "UserLogin",
     component: Login,
   },
   {
     path: "/register",
-    name: "register",
+    name: "UserRegister",
     component: Register,
   },
   {
     path: "/dashboard",
-    name : "dashboard",
-    component : Dashboard
+    name: "UserDashboard",
+    component: UserDashboard,
   },
   {
     path: "/createDeck",
-    name : "createDeck",
-    component : CreateDeck
+    name: "createDeck",
+    component: CreateDeck,
   },
   {
     path: "/addCards",
-    name : "AddCards",
-    component : AddCards
+    name: "AddCards",
+    component: AddCards,
   },
   {
     path: "/dashboard/deck/:deck_name/edit",
-    name : "EditDeck",
-    component : EditDeck
+    name: "EditDeck",
+    component: EditDeck,
   },
   {
     path: "/dashboard/deck/:deck_name/edit/cards",
-    name : "EditCards",
-    component : EditCards
+    name: "EditCards",
+    component: EditCards,
+  },
+  {
+    path: "/dashboard/deck/:deck_name/quiz",
+    name: "DeckQuiz",
+    component: DeckQuiz,
   },
   {
     path: "/about",
