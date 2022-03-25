@@ -5,7 +5,7 @@ from flask_restful import Resource, Api
 from application import config 
 from application.config import LocalDevelopmentConfig
 from application.database import db
-from flask_cors import CORS
+from flask_cors import CORS,cross_origin
 from application.models import *
 from flask_security import Security, SQLAlchemySessionUserDatastore, SQLAlchemyUserDatastore
 from application.models import User, Role
@@ -25,8 +25,7 @@ api = None
 def create_app():
     app = Flask(__name__, template_folder="templates")
     CORS(app)
-    # CORS(app,resources={r"/api": {"origins": "*"}})
-    # app.config['CORS_HEADERS'] = 'Content-Type'
+    app.config['CORS_HEADERS'] = 'Content-Type'
     if os.getenv('ENV','development') == 'production':
         raise Exception("Currently no production config is setup.")
     else:
@@ -53,6 +52,7 @@ api.add_resource(DeckResource, "/api/deck","/api/deck/<email>","/api/deck/edit/<
 api.add_resource(CardResource, "/api/card/<card_id>", "/api/card")
 api.add_resource(QuizResource,"/api/quiz/<email>/<deck_name>")
 api.add_resource(UserDeckResource,"/api/<email>/decks_info")
+api.add_resource(ScoreResource,"/api/deck/scoring")
 
 if __name__ == '__main__':   
     app.run(debug = True)
