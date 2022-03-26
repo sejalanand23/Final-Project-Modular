@@ -15,7 +15,7 @@
           <th>Add Cards</th>
           <th>Edit Deck Name</th>
           <th>View/Edit Cards</th>
-          <th>Delete Delete</th>
+          <th>Delete Deck</th>
           <th>Take Quiz</th>
         </tr>
       </thead>
