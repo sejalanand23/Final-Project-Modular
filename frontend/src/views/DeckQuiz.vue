@@ -72,7 +72,9 @@
       <div class="col"></div>
       <div class="col-5">
         <br />
-        <h2 class="title" align="center">Your score is: {{ this.score.toFixed(2) }}%</h2>
+        <h2 class="title" align="center">
+          Your score is: {{ this.score.toFixed(2) }}%
+        </h2>
       </div>
       <div class="col"></div>
     </div>
