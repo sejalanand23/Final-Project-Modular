@@ -1,19 +1,20 @@
 from distutils.log import debug
 import os
 from flask import Flask
-from flask_restful import Api 
+from flask_restful import Api
+# from gevent import config 
 from application.config import LocalDevelopmentConfig
 from application.database import db
 from flask_cors import CORS
 from application.models import *
 from flask_security import SQLAlchemySessionUserDatastore,Security
 from application import workers
-# from application.add_resource import cache
+# from flask_sse import sse
 
 app = None
 api = None
 celery = None
-# cache = None
+
 
 def create_app():
     app = Flask(__name__, template_folder="templates")
@@ -58,6 +59,8 @@ def create_app():
     return app,api,celery
 
 app,api,celery = create_app()
+
+# app.register_blueprint(sse, url_prefix = '/stream')
 
 from application.controllers import *
 

@@ -17,11 +17,6 @@ def alchemyencoder(obj):
         return float(obj)  
 
 
-
-user_parser = reqparse.RequestParser()
-user_parser.add_argument('email',type = str,required = True)
-user_parser.add_argument('password',type = str)
-
 deck_post_parser = reqparse.RequestParser()
 deck_post_parser.add_argument('email',type = str,required = True)
 deck_post_parser.add_argument('deck_name',type = str, required = True)
@@ -36,9 +31,6 @@ card_post_parser.add_argument('email',type = str,required = True, help = "User i
 card_post_parser.add_argument('card_front',type = str,required = True, help = "Card Front is Required")
 card_post_parser.add_argument('card_back',type = str,required = True, help = "Card Back is Required")
 card_post_parser.add_argument('deck_id',type = int, required = True, help = "Deck Info is Required")
-
-deck_parser = reqparse.RequestParser()
-deck_parser.add_argument('deck_name',type = str, required = True)
 
 score_parser = reqparse.RequestParser()
 score_parser.add_argument('deck_id',type = int, required = True)
@@ -60,8 +52,10 @@ class UserDeckResource(Resource):
 class DeckResource(Resource):
     @marshal_with(deck_fields)
     @auth_required("token",grace=None)
-    def get(self,email):
-        print('No Cache')
+    def get(self,email=None):
+        if email is None:
+            decks = Deck.query.all()
+            return decks,200
         user = User.query.filter_by(email = email).first()
         if not user:
             abort(404, "User does not exist")
@@ -72,7 +66,6 @@ class DeckResource(Resource):
             decks = db.session.query(Deck).filter(Deck.deck_id.in_(ids)).all()
             print(type(decks))
             return decks,200
-            abort(404,"No Deck Found")
                     
 
     @marshal_with(deck_fields)
@@ -154,38 +147,6 @@ class DeckResource(Resource):
         
 
 class CardResource(Resource):
-    @marshal_with(card_fields)
-    @auth_required("token")
-    def get(self,card_id = None):
-        card = Card.query.filter_by(card_id = card_id).first()
-        if card:
-            return card,200
-        else:
-            abort(404,"Card Not Found")
-    
-    # @marshal_with(card_fields)
-    @auth_required("token")
-    def put(self,card_id):
-        card = Card.query.filter_by(card_id = card_id).first()
-        if not card:
-            abort(404, "Card Not Found")
-
-        card_args = card_parser.parse_args()
-        front_update = card_args.get('card_front', None)
-        back_update = card_args.get('card_back', None)
-        difficulty_update = (card_args.get('difficulty',None) or "easy")
-
-        if not front_update:
-            abort(400, "Card Front Not Specified")
-        elif not back_update:
-             abort(400, "Card Back Not Specified")
-        else:    
-            card.card_front = front_update
-            card.card_back = back_update
-            card.difficulty = difficulty_update
-            db.session.merge(card)
-            db.session.commit()
-            return "Card updated successfully",200
 
     @marshal_with(card_fields)
     @auth_required("token")
@@ -272,8 +233,9 @@ class Decks_Export_Task(Resource):
         decks = db.session.query(Deck).filter(Deck.deck_id.in_(ids)).all()
         deck_schema = DeckSchema(many=True)
         decks_output = deck_schema.dump(decks)
-        res = generate_csv.delay(decks_output)
-        return str(res.status)
+        job_id = generate_csv.delay(decks_output)
+        # sse.publish({'message':'Export Requested'},type='export')
+        return 'started ' + str(job_id)
 class Cards_Export_Task(Resource):
     # @auth_required("token")
     def get(self,email,deck_name):
