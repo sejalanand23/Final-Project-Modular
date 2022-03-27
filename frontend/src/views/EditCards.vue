@@ -31,6 +31,10 @@
         </tr>
       </tbody>
     </table>
+    <br />
+    <button class="btn btn-outline-dark" @click="export_data">
+      Export Cards as CSV
+    </button>
   </div>
 </template>
 
@@ -87,7 +91,7 @@ export default {
               this.error_message = response.message;
               console.log(response.message);
             } else {
-              console.log("Deck Deleted");
+              this.success_message = "Card Deleted";
               this.$router.go();
             }
           })
@@ -97,6 +101,23 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    async export_data() {
+      return fetch(
+        `http://127.0.0.1:5000/api/export/cards/${this.deck_name}/${this.email}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json;charset=utf-8",
+            "Authentication-Token": `${this.auth_token}`,
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then(() => {
+          this.success_message = "Export Complete. File is downloaded.";
+        })
+        .catch((error) => console.log(error));
     },
   },
 };

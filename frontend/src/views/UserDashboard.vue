@@ -3,6 +3,9 @@
     <p class="alert alert-danger" role="alert" v-if="error_message">
       {{ error_message }}
     </p>
+    <p class="alert alert-success" role="alert" v-if="success_message">
+      {{ success_message }}
+    </p>
     <h1 class="display-6">Welcome to your Dashboard!</h1>
     <br />
     <table align="center" class="table table-bordered">
@@ -91,6 +94,11 @@
     <router-link class="btn btn-outline-dark" to="/createDeck"
       >Create a new Deck</router-link
     >
+    <br />
+    <br />
+    <button class="btn btn-outline-dark" @click="export_data">
+      Export Decks as CSV
+    </button>
   </div>
 </template>
 
@@ -103,6 +111,7 @@ export default {
       auth_token: "",
       decks: [],
       error_message: "",
+      success_message: "",
     };
   },
   async created() {
@@ -157,6 +166,20 @@ export default {
     },
     storeID(deck_id) {
       sessionStorage.setItem("deck_id", deck_id);
+    },
+    async export_data() {
+      return fetch(`http://127.0.0.1:5000/api/export/decks/${this.email}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json;charset=utf-8",
+          "Authentication-Token": `${this.auth_token}`,
+        },
+      })
+        .then((res) => res.json())
+        .then(() => {
+          this.success_message = "File Downloaded.";
+        })
+        .catch((error) => console.log(error));
     },
   },
 };

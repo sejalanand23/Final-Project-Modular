@@ -1,5 +1,6 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
+from datetime import timedelta
 
 class Config():
     DEBUG = False
@@ -8,6 +9,12 @@ class Config():
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     WTF_CSRF_ENABLED = False
     SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
+    REDIS_URL = "redis://localhost:6379"
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_PORT = 6379
+    CELERY_BROKER_URL = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
 
 class LocalDevelopmentConfig(Config):
     SQLITE_DB_DIR = os.path.join(basedir, "../db_directory")
@@ -22,12 +29,11 @@ class LocalDevelopmentConfig(Config):
     SECURITY_UNAUTHORIZED_VIEW = None
     SECURITY_POST_LOGIN_VIEW = '/dashboard/email'
     WTF_CSRF_ENABLED = False
-    # SECURITY_URL_PREFIX = '/api/accounts'
-    # # SECURITY_POST_CONFIRM_VIEW = "/confirmed"
-    # # SECURITY_CONFIRM_ERROR_VIEW = "/confirm-error"
-    # # SECURITY_RESET_VIEW = "/reset-password"
-    # # SECURITY_RESET_ERROR_VIEW = "/reset-password"
-    # SECURITY_REDIRECT_BEHAVIOR = "spa"
-    # SECURITY_CSRF_PROTECT_MECHANISMS = ["session", "basic"]
-    # SECURITY_CSRF_IGNORE_UNAUTH_ENDPOINTS = True
     SECURITY_REDIRECT_HOST = 'localhost:8080'
+    REDIS_URL = "redis://localhost:6379"
+    CACHE_TYPE = "RedisCache"
+    CACHE_REDIS_HOST = "localhost"
+    CACHE_REDIS_PORT = 6379
+    CELERY_BROKER_URL = "redis://localhost:6379/1"
+    CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    SECURITY_FRESHNESS_GRACE_PERIOD = timedelta(hours=1)

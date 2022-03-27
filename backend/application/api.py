@@ -1,9 +1,22 @@
+from email.policy import default
 from flask_restful import Resource,marshal_with,reqparse
 from flask_security import auth_required
 from application.models import *
 from application.database import db
 import time
-from flask import abort
+import decimal
+from flask import abort, jsonify
+from application.tasks import *
+# from application import cache
+
+def alchemyencoder(obj):
+    """JSON encoder function for SQLAlchemy special classes."""
+    if isinstance(obj, time):
+        return str(obj)
+    elif isinstance(obj, decimal.Decimal):
+        return float(obj)  
+
+
 
 user_parser = reqparse.RequestParser()
 user_parser.add_argument('email',type = str,required = True)
@@ -31,49 +44,24 @@ score_parser = reqparse.RequestParser()
 score_parser.add_argument('deck_id',type = int, required = True)
 score_parser.add_argument('correct',type = int, required = True)
 
-class UserResource(Resource):
-    @auth_required("token")
-    @marshal_with(user_fields)
-    def get(self,email=None):
-        if email:
-            user = User.query.filter_by(email = email).first()
-            if user is None:
-                abort(404, "User does not exist")
-            else:
-                return user, 201
-        else:
-            user = User.query.all()
-            return user, 201
-    
-    @marshal_with(user_fields)
-    @auth_required("token")
-    def post(self):
-        user_args = user_parser.parse_args()
-        user = User.query.filter_by(email = user_args['email']).first()
-        if user:
-            abort(409,"User already exists")
-        else:
-            u = User(email = user_args['email'],password = user_args['password'])
-            db.session.add(u)
-            db.session.commit()
-            return u, 201
-
+@marshal_with(user_deck_fields)
+# @cache.memoize(timeout=50)
+def cards_in_deck(email):
+    user = User.query.filter_by(email = email).first()
+    uid = user.id
+    decks = db.session.query(UserDeckRelation).filter(UserDeckRelation.userUCR_foreignid == uid).all()
+    return decks,200
 class UserDeckResource(Resource):
-    @marshal_with(user_deck_fields)
-    @auth_required("token")
+    # @marshal_with(user_deck_fields)
+    @auth_required("token",grace=None)
     def get(self,email):
-        user = User.query.filter_by(email = email).first()
-        if not user:
-            abort(404, "User does not exist")
-        else:
-            uid = user.id
-            decks = db.session.query(UserDeckRelation).filter(UserDeckRelation.userUCR_foreignid == uid).all()
-            return decks,200
+        return cards_in_deck(email)   
 
 class DeckResource(Resource):
     @marshal_with(deck_fields)
-    @auth_required("token")
+    @auth_required("token",grace=None)
     def get(self,email):
+        print('No Cache')
         user = User.query.filter_by(email = email).first()
         if not user:
             abort(404, "User does not exist")
@@ -82,6 +70,7 @@ class DeckResource(Resource):
             deck_ids = db.session.query( UserDeckRelation).with_entities(UserDeckRelation.deckUCR_foreignid).filter(UserDeckRelation.userUCR_foreignid == uid).all()
             ids = [id for (id,) in deck_ids]
             decks = db.session.query(Deck).filter(Deck.deck_id.in_(ids)).all()
+            print(type(decks))
             return decks,200
             abort(404,"No Deck Found")
                     
@@ -272,3 +261,36 @@ class ScoreResource(Resource):
         db.session.merge(deck)
         db.session.commit()
         return "Score updated",200
+
+class Decks_Export_Task(Resource):
+    @auth_required("token")
+    def get(self,email):
+        user = User.query.filter_by(email = email).first()
+        uid = user.id  
+        deck_ids = db.session.query( UserDeckRelation).with_entities(UserDeckRelation.deckUCR_foreignid).filter(UserDeckRelation.userUCR_foreignid == uid).all()
+        ids = [id for (id,) in deck_ids]
+        decks = db.session.query(Deck).filter(Deck.deck_id.in_(ids)).all()
+        deck_schema = DeckSchema(many=True)
+        decks_output = deck_schema.dump(decks)
+        res = generate_csv.delay(decks_output)
+        return str(res.status)
+class Cards_Export_Task(Resource):
+    # @auth_required("token")
+    def get(self,email,deck_name):
+        user = User.query.filter_by(email = email).first()
+        uid = user.id     
+        #get decks by current user
+        decks = Deck.query.filter_by(deck_name = deck_name, ).all()   #get all decks with this name
+        deck_foreign = UserDeckRelation.query.filter_by(userUCR_foreignid = uid).all()
+        if deck_foreign: # if current user has created any decks
+            if decks: # if there are any decks with this deck name 
+                for deck in decks:
+                    for deck_ in deck_foreign:
+                        if deck.deck_id == deck_.deckUCR_foreignid: #if user has created deck with deck name entered 
+                            all_card_ids = db.session.query(CardDeckRelation).with_entities(CardDeckRelation.cardCDR_foreignid).filter(CardDeckRelation.deckCDR_foreignid == deck.deck_id).all()
+                            ids = [id for (id,) in all_card_ids]
+                            cards = db.session.query(Card).filter(Card.card_id.in_(ids)).all()
+                            card_schema = CardSchema(many=True)
+                            cards_output = card_schema.dump(cards)
+                            res = generate_csv.delay(cards_output)
+                            return str(res.status)

@@ -1,8 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_restful import fields
 from flask_security import UserMixin, RoleMixin
+from flask_marshmallow import Marshmallow
 
 db = SQLAlchemy()
+ma = Marshmallow()
 
 role_users = db.Table('role_users',
         db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
@@ -10,7 +12,6 @@ role_users = db.Table('role_users',
 class User(db.Model,UserMixin):
   __tablename__ = 'user'
   id = db.Column(db.Integer, primary_key = True)
-  username = db.Column(db.String(15)) 
   email = db.Column(db.String(255), unique=True)
   password = db.Column(db.String(255))
   active = db.Column(db.Boolean())
@@ -35,7 +36,6 @@ class Card(db.Model):
   card_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
   card_front = db.Column(db.String(100), nullable = False)
   card_back = db.Column(db.String(100), nullable = False)
-  difficulty = db.Column(db.String(100))
   deck_card = db.relationship('CardDeckRelation', backref = 'card',cascade="all,delete")
 
 card_fields = {
@@ -44,6 +44,7 @@ card_fields = {
     'card_back' : fields.String,
     'difficulty' : fields.String
 }
+
 
 class Deck(db.Model):
   __tablename__ = 'deck'
@@ -56,6 +57,8 @@ class Deck(db.Model):
   quiz_count = db.Column(db.Integer,default = 0)
   card_deck = db.relationship('CardDeckRelation', backref = 'deck',cascade="all,delete")
   user_deck = db.relationship('UserDeckRelation', backref = 'deck',cascade="all,delete")
+
+
 
 deck_fields = {
     'deck_id' : fields.Integer,
@@ -90,3 +93,19 @@ card_deck_fields = {
   'cardCDR_foreignid' : fields.Integer,
   'deckCDR_foreignid' : fields.Integer
 }
+
+class DeckSchema(ma.SQLAlchemySchema):
+  class Meta:
+    model = Deck
+  
+  deck_id = ma.auto_field()
+  deck_name = ma.auto_field()
+  deck_total_score = ma.auto_field()
+  deck_average_score = ma.auto_field()
+  correct = ma.auto_field()
+  time = ma.auto_field()
+  quiz_count = ma.auto_field()
+
+class CardSchema(ma.SQLAlchemyAutoSchema):
+  class Meta:
+    model = Card
