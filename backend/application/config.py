@@ -1,6 +1,6 @@
+from datetime import timedelta
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
-from datetime import timedelta
 
 class Config():
     DEBUG = False
@@ -15,6 +15,7 @@ class Config():
     CACHE_REDIS_PORT = 6379
     CELERY_BROKER_URL = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    # REDIS_URL = "redis://localhost:6379"
 
 class LocalDevelopmentConfig(Config):
     SQLITE_DB_DIR = os.path.join(basedir, "../db_directory")
@@ -36,4 +37,5 @@ class LocalDevelopmentConfig(Config):
     CACHE_REDIS_PORT = 6379
     CELERY_BROKER_URL = "redis://localhost:6379/1"
     CELERY_RESULT_BACKEND = "redis://localhost:6379/2"
+    # REDIS_URL = "redis://localhost:6379"
     SECURITY_FRESHNESS_GRACE_PERIOD = timedelta(hours=1)

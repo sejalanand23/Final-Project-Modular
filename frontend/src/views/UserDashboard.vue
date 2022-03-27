@@ -6,6 +6,9 @@
     <p class="alert alert-success" role="alert" v-if="success_message">
       {{ success_message }}
     </p>
+    <!-- <ul>
+            <li v-for="message in messages" :key="message"> {{message}} </li>
+    </ul> -->
     <h1 class="display-6">Welcome to your Dashboard!</h1>
     <br />
     <table align="center" class="table table-bordered">
@@ -112,8 +115,16 @@ export default {
       decks: [],
       error_message: "",
       success_message: "",
+      // messages : []
     };
   },
+  // mounted: function() {
+  //     source = new EventSource("/stream");
+  //     source.addEventListener('export', event => {
+  //         let data = JSON.parse(event.data);
+  //         this.messages.push(data.message)
+  //     }, false);
+  //   },
   async created() {
     sessionStorage.removeItem("deck_id");
     this.auth_token = sessionStorage.getItem("auth-token");
