@@ -176,8 +176,9 @@ export default {
         },
       })
         .then((res) => res.json())
-        .then(() => {
-          this.success_message = "File Downloaded.";
+        .then((r) => {
+          console.log(r);
+          this.success_message = "Export Complete. File is downloaded.";
         })
         .catch((error) => console.log(error));
     },
