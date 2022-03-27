@@ -2,7 +2,6 @@ from sympy import re
 from application.workers import celery
 from datetime import datetime
 import csv
-from application.data_access import *
 import time
 from flask_sse import sse
 
