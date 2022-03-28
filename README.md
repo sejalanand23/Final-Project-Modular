@@ -27,8 +27,16 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
+## Start redis server
+```
+brew services start redis
+```
+## Celery Jobs
+```
+celery -A main.celery worker --loglevel=info
+```
 
-## Backend
+## Flask Application
 
 ### Install Requirements
 ```
@@ -36,7 +44,6 @@ pip install -r requirements.txt
 ```
 ### Running the Application
 Run main.py
-
 
 
 ## Files and Folders Structure
@@ -49,29 +56,16 @@ Run main.py
        - [database.py](backend/application/database.py)
        - [models.py](backend/application/models.py)
        - [security.py](backend/application/security.py)
+       - [tasks.py](backend/application/tasks.py)
        - [validation.py](backend/application/validation.py)
+       - [workers.py](backend/application/workers.py)
+     - [celerybeat\-schedule.db](backend/celerybeat-schedule.db)
      - __db\_directory__
+       - [ER diagram.png](backend/db_directory/ER%20diagram.png)
        - [database.sqlite3](backend/db_directory/database.sqlite3)
        - [database.sqlite3.sql](backend/db_directory/database.sqlite3.sql)
      - [main.py](backend/main.py)
-     - __static__
-       - [home.jpeg](backend/static/home.jpeg)
-     - __templates__
-       - [add\_cards.html](backend/templates/add_cards.html)
-       - [create\_deck.html](backend/templates/create_deck.html)
-       - [dashboard.html](backend/templates/dashboard.html)
-       - [edit\_deck.html](backend/templates/edit_deck.html)
-       - [home.html](backend/templates/home.html)
-       - [login.html](backend/templates/login.html)
-       - [quiz.html](backend/templates/quiz.html)
-       - [quiz\_ans.html](backend/templates/quiz_ans.html)
-       - [register.html](backend/templates/register.html)
-       - [result.html](backend/templates/result.html)
-       - __security__
-         - [\_messages.html](backend/templates/security/_messages.html)
-         - [base.html](backend/templates/security/base.html)
-         - [login\_user.html](backend/templates/security/login_user.html)
-         - [register\_user.html](backend/templates/security/register_user.html)
+     - [requirements.txt](backend/requirements.txt)
    - __frontend__
      - [README.md](frontend/README.md)
      - [babel.config.js](frontend/babel.config.js)
@@ -85,18 +79,21 @@ Run main.py
      - __src__
        - [App.vue](frontend/src/App.vue)
        - __assets__
-         - [logo.png](frontend/src/assets/logo.png)
+         - [home.jpeg](frontend/src/assets/home.jpeg)
        - __components__
-         - [HelloWorld.vue](frontend/src/components/HelloWorld.vue)
        - [main.js](frontend/src/main.js)
        - __router__
          - [index.js](frontend/src/router/index.js)
        - __views__
          - [AboutView.vue](frontend/src/views/AboutView.vue)
-         - [Dashboard.vue](frontend/src/views/Dashboard.vue)
+         - [AddCards.vue](frontend/src/views/AddCards.vue)
+         - [CreateDeck.vue](frontend/src/views/CreateDeck.vue)
+         - [DeckQuiz.vue](frontend/src/views/DeckQuiz.vue)
+         - [EditCards.vue](frontend/src/views/EditCards.vue)
+         - [EditDeck.vue](frontend/src/views/EditDeck.vue)
          - [HomeView.vue](frontend/src/views/HomeView.vue)
          - [Login.vue](frontend/src/views/Login.vue)
          - [Register.vue](frontend/src/views/Register.vue)
+         - [UserDashboard.vue](frontend/src/views/UserDashboard.vue)
      - [vue.config.js](frontend/vue.config.js)
-   - [requirements.txt](requirements.txt)
-
+     - [yarn.lock](frontend/yarn.lock)
