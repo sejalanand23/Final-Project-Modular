@@ -34,20 +34,7 @@ card_post_parser.add_argument('deck_id',type = int, required = True, help = "Dec
 
 score_parser = reqparse.RequestParser()
 score_parser.add_argument('deck_id',type = int, required = True)
-score_parser.add_argument('correct',type = int, required = True)
-
-@marshal_with(user_deck_fields)
-# @cache.memoize(timeout=50)
-def cards_in_deck(email):
-    user = User.query.filter_by(email = email).first()
-    uid = user.id
-    decks = db.session.query(UserDeckRelation).filter(UserDeckRelation.userUCR_foreignid == uid).all()
-    return decks,200
-class UserDeckResource(Resource):
-    # @marshal_with(user_deck_fields)
-    @auth_required("token",grace=None)
-    def get(self,email):
-        return cards_in_deck(email)   
+score_parser.add_argument('correct',type = int, required = True)   
 
 class DeckResource(Resource):
     @marshal_with(deck_fields)
@@ -235,9 +222,9 @@ class Decks_Export_Task(Resource):
         decks_output = deck_schema.dump(decks)
         job_id = generate_csv.delay(decks_output)
         # sse.publish({'message':'Export Requested'},type='export')
-        return 'started ' + str(job_id)
+        return "Job started",200
 class Cards_Export_Task(Resource):
-    # @auth_required("token")
+    @auth_required("token")
     def get(self,email,deck_name):
         user = User.query.filter_by(email = email).first()
         uid = user.id     
@@ -255,4 +242,4 @@ class Cards_Export_Task(Resource):
                             card_schema = CardSchema(many=True)
                             cards_output = card_schema.dump(cards)
                             res = generate_csv.delay(cards_output)
-                            return str(res.status)
+                            return "Job started",200

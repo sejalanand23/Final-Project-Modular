@@ -69,7 +69,6 @@ from application.api import *
 api.add_resource(DeckResource, "/api/deck","/api/deck/<email>","/api/deck/edit/<deck_name>")
 api.add_resource(CardResource, "/api/card/<card_id>", "/api/card")
 api.add_resource(QuizResource,"/api/quiz/<email>/<deck_name>")
-api.add_resource(UserDeckResource,"/api/<email>/decks_info")
 api.add_resource(ScoreResource,"/api/deck/scoring")
 api.add_resource(Decks_Export_Task,"/api/export/decks/<email>")
 api.add_resource(Cards_Export_Task,"/api/export/cards/<deck_name>/<email>")
