@@ -41,8 +41,7 @@ class Card(db.Model):
 card_fields = {
     'card_id' : fields.Integer,
     'card_front' : fields.String,
-    'card_back' : fields.String,
-    'difficulty' : fields.String
+    'card_back' : fields.String
 }
 
 
@@ -76,11 +75,6 @@ class UserDeckRelation(db.Model):
   userUCR_foreignid = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
   deckUCR_foreignid = db.Column(db.Integer, db.ForeignKey('deck.deck_id'), nullable = False)
 
-user_deck_fields = {
-  'user_deck_relation_id' : fields.Integer,
-  'userUCR_foreignid' : fields.Integer,
-  'deckUCR_foreignid' : fields.Integer
-}
 
 class CardDeckRelation(db.Model):
   __tablename__ = 'card_deck_relation'
@@ -88,11 +82,6 @@ class CardDeckRelation(db.Model):
   cardCDR_foreignid = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable = False)
   deckCDR_foreignid = db.Column(db.Integer, db.ForeignKey('deck.deck_id'), nullable = False)
 
-card_deck_fields = {
-  'card_deck_relation_id' : fields.Integer,
-  'cardCDR_foreignid' : fields.Integer,
-  'deckCDR_foreignid' : fields.Integer
-}
 
 class DeckSchema(ma.SQLAlchemySchema):
   class Meta:
